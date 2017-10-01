@@ -3,6 +3,7 @@
 var SwaggerExpress = require('swagger-express-mw');
 var app = require('express')();
 var mongoose = require('mongoose');
+var env = require('./config/env');
 
 module.exports = app; // for testing
 
@@ -19,12 +20,14 @@ SwaggerExpress.create(config, function(err, swaggerExpress) {
   var port = process.env.PORT || 10010;
   app.listen(port);
 
-  mongoose.connect('mongodb://localhost/closr').connection.on('error', function (err) {
-      console.log(err)
+  console.log('App started on port: ', port);
+
+  mongoose.connection.openUri(env.local.db, function (err) {
+      if (err) return console.log(err);
+
+      console.log('********** db connected **********')
   });
 
-  if (swaggerExpress.runner.swagger.paths['/hello']) {
-    console.log('try this:\ncurl http://127.0.0.1:' + port + '/hello?name=Scott');
-  }
+  console.log(swaggerExpress.runner.swagger.paths);
 
 });
