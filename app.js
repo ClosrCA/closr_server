@@ -20,14 +20,7 @@ SwaggerExpress.create(config, function(err, swaggerExpress) {
   var port = process.env.PORT || 10010;
   app.listen(port);
 
+  mongoose.connect(env.local.db, {useMongoClient: true});
+
   console.log('App started on port: ', port);
-
-  mongoose.connection.openUri(env.local.db, function (err) {
-      if (err) return console.log(err);
-
-      console.log('********** db connected **********')
-  });
-
-  console.log(swaggerExpress.runner.swagger.paths);
-
 });
