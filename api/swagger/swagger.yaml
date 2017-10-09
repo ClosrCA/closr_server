@@ -54,7 +54,38 @@ definitions:
       - message
     properties:
       message:
-        type: string
+        type: object
+        properties:
+          profile: 
+            type: object
+            properties:
+                facebookID:
+                  type: string
+                firebaseID:
+                  type: string
+                firstname:
+                  type: string
+                lastname:
+                  type: string
+                gender: 
+                  type: string
+                email:
+                  type: string
+                birthday: 
+                  type: string
+                avatar:
+                  type: string
+                phone:
+                  type: string
+                createdAt:
+                  type: string
+                updatedAt:
+                  type: string
+          isNewUser:
+            type: boolean
+          token:
+            type: string
+                
   ErrorResponse:
     required:
       - message

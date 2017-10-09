@@ -15,7 +15,7 @@ var UserController = {
             var fbID = profile.data.user_id;
 
             User.findOne({facebookID: fbID}, function (err, user) {
-                if (err) return res.status(500).json(err);
+                if (err) return res.status(500).json({message: err.message});
 
                 if (user) {
                     var message = {
@@ -24,7 +24,7 @@ var UserController = {
                         token: auth.issueToken(user.id)
                     };
 
-                    res.json({message: true})
+                    res.json({message: message})
                 } else {
                     fb.fetchUserProfile(fbToken, function (err, profile) {
                         if (err) return res.status(400).json({message: err.message});
@@ -41,7 +41,7 @@ var UserController = {
                             if (err) return res.status(500).json(err);
 
                             res.json({
-                                profile: userObject._doc,
+                                profile: userObject,
                                 isNewUser: true,
                                 token: auth.issueToken(userObject.id)
                             })
