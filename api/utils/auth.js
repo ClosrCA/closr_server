@@ -12,13 +12,10 @@ module.exports = {
 
 function verifyToken(token, callback) {
 
-    function sendError() {
-        return req.res.status(403).json({ message: "Error: Access Denied" });
-    }
+    var error = Error('Access token is missing or invalid');
 
     if (token && token.indexOf("Bearer ") === 0) {
         var tokenString = token.split(" ")[1];
-
         jwt.verify(tokenString, sharedSecret, function(verificationError, decodedToken) {
 
             if (verificationError === null && decodedToken) {
@@ -28,14 +25,14 @@ function verifyToken(token, callback) {
 
                     return callback(null, decodedToken.sub)
                 } else {
-                    return callback(sendError(), null)
+                    return callback(error, null)
                 }
             } else {
-                return callback(sendError(), null)
+                return callback(error, null)
             }
         });
     } else {
-        return callback(sendError(), null)
+        return callback(error, null)
     }
 }
 

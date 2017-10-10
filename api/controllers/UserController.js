@@ -10,7 +10,7 @@ var UserController = {
         fb.verifyUser(fbToken, function (err, profile) {
             if (err) return res.status(400).json({message: err.message});
 
-            if (!profile.data.is_valid) return res.status(400).json({message: "invalid facebook token"});
+            if (!profile.data.is_valid) return res.status(400).json(profile.data.error.message);
 
             var fbID = profile.data.user_id;
 
@@ -48,6 +48,19 @@ var UserController = {
                         })
                     })
                 }
+            })
+        })
+    },
+
+    getMyProfile: function (req, res) {
+        var token = req.headers.authorization;
+        auth.verifyToken(token, function (err, userID) {
+            if (err) return res.status(401).json(err.message);
+
+            User.findOne(userID, function (e, user) {
+                if (e) return res.status(500).json({message: e.message});
+
+                res.json(user);
             })
         })
     }

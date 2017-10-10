@@ -45,6 +45,28 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/ErrorResponse"
+  /profile:
+     # binds a127 app logic to a route
+    x-swagger-router-controller: UserController
+    get:
+      description: Returns user's profile
+      operationId: getMyProfile
+      parameters:
+        - name: Authorization
+          in: header
+          type: string
+          required: true
+      responses:
+        "200":
+          description: Success
+          schema:
+            # a pointer to a definition
+            $ref: "#/definitions/LoginResponse"
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
   /swagger:
     x-swagger-pipe: swagger_raw
 # complex objects have schema definitions
