@@ -8,14 +8,14 @@ var UserController = {
         var fbToken = req.body.access_token;
 
         fb.verifyUser(fbToken, function (err, profile) {
-            if (err) return res.status(400).json({message: err.message});
+            if (err) return res.status(400).json(err.message);
 
-            if (!profile.data.is_valid) return res.status(400).json({message: "invalid facebook token"});
+            if (!profile.data.is_valid) return res.status(400).json(profile.data.error.message);
 
             var fbID = profile.data.user_id;
 
             User.findOne({facebookID: fbID}, function (err, user) {
-                if (err) return res.status(500).json({message: err.message});
+                if (err) return res.status(500).json(err.message);
 
                 if (user) {
                     var message = {
@@ -27,7 +27,7 @@ var UserController = {
                     res.json({message: message})
                 } else {
                     fb.fetchUserProfile(fbToken, function (err, profile) {
-                        if (err) return res.status(400).json({message: err.message});
+                        if (err) return res.status(400).json(err.message);
 
                         User.create({
                             facebookID: profile.id,
@@ -38,7 +38,7 @@ var UserController = {
                             birthday: profile.birthday,
                             avatar: profile.picture.data.url
                         }, function (err, userObject) {
-                            if (err) return res.status(500).json(err);
+                            if (err) return res.status(500).json(err.message);
 
                             res.json({
                                 profile: userObject,
@@ -48,6 +48,19 @@ var UserController = {
                         })
                     })
                 }
+            })
+        })
+    },
+
+    getMyProfile: function (req, res) {
+        var token = req.headers.authorization;
+        auth.verifyToken(token, function (err, userID) {
+            if (err) return res.status(401).json(err.message);
+
+            User.findById(userID, function (e, user) {
+                if (e) return res.status(500).json(e.message);
+
+                res.json({profile: user});
             })
         })
     }
