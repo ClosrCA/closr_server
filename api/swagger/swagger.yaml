@@ -61,7 +61,7 @@ paths:
           description: Success
           schema:
             # a pointer to a definition
-            $ref: "#/definitions/LoginResponse"
+            $ref: "#/definitions/Profile"
         # responses may fall through to errors
         default:
           description: Error
@@ -71,6 +71,31 @@ paths:
     x-swagger-pipe: swagger_raw
 # complex objects have schema definitions
 definitions:
+  Profile:
+    type: object
+    properties:
+      facebookID:
+        type: string
+      firebaseID:
+        type: string
+      firstname:
+        type: string
+      lastname:
+        type: string
+      gender: 
+        type: string
+      email:
+        type: string
+      birthday: 
+        type: string
+      avatar:
+        type: string
+      phone:
+        type: string
+      createdAt:
+        type: string
+      updatedAt:
+        type: string
   LoginResponse:
     required:
       - message
@@ -79,30 +104,7 @@ definitions:
         type: object
         properties:
           profile: 
-            type: object
-            properties:
-                facebookID:
-                  type: string
-                firebaseID:
-                  type: string
-                firstname:
-                  type: string
-                lastname:
-                  type: string
-                gender: 
-                  type: string
-                email:
-                  type: string
-                birthday: 
-                  type: string
-                avatar:
-                  type: string
-                phone:
-                  type: string
-                createdAt:
-                  type: string
-                updatedAt:
-                  type: string
+            $ref: "#/definitions/Profile"
           isNewUser:
             type: boolean
           token:
