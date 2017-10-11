@@ -1,6 +1,7 @@
 var User = require('../models/User');
 var fb = require('../utils/facebook');
 var auth = require('../utils/auth');
+var _ = require('lodash');
 
 var UserController = {
 
@@ -61,6 +62,46 @@ var UserController = {
                 if (e) return res.status(500).json(e.message);
 
                 res.json({profile: user});
+            })
+        })
+    },
+
+    updateProfile: function (req, res) {
+        var token = req.headers.authorization;
+        var displayName = req.body.displayName;
+        var email = req.body.email;
+        var phone = req.body.phone;
+        var avatar = req.body.avatar;
+
+        // TODO: data validation
+        auth.verifyToken(token, function (err, userID) {
+            if (err) return res.status(401).json(err.message);
+
+            var update = {};
+            if (displayName) {
+                update.displayName = displayName;
+            }
+
+            if (email) {
+                update.email = email;
+            }
+
+            if (phone) {
+                update.phone = phone;
+            }
+
+            if (avatar) {
+                update.avatar = avatar;
+            }
+
+            if (_.isEmpty(update)) {
+                return res.status(204).send();
+            }
+
+            User.findByIdAndUpdate(userID, update, function (e, user) {
+                if (e) return res.status(500).json(e.message);
+
+                return res.status(204).send();
             })
         })
     }

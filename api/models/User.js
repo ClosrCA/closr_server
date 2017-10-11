@@ -6,6 +6,7 @@ var userSchema = new Schema({
     firebaseID: String,
     firstname: String,
     lastname: String,
+    displayName: String,
     birthday: Date,
     gender: String,
     email: String,
