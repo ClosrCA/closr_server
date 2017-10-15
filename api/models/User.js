@@ -12,8 +12,8 @@ var userSchema = new Schema({
     email: String,
     phone: String,
     avatar: String,
-    created_at: { type: Date, default: Date.now() },
-    updated_at: { type: Date, default: Date.now() }
+    createdAt: { type: Date, default: Date.now() },
+    updatedAt: { type: Date, default: Date.now() }
 }, {
     versionKey: false
 });

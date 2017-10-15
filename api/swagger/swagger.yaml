@@ -100,6 +100,49 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/ErrorResponse"
+  /create/event:
+     # binds a127 app logic to a route
+    x-swagger-router-controller: EventController
+    post:
+      description: Create event with authorized user
+      operationId: create
+      parameters:
+        - name: Authorization
+          in: header
+          type: string
+          required: true
+        - name: body
+          in: body
+          required: true
+          description: Event boday
+          schema:
+            properties:
+              yelpID:
+                type: string
+              title:
+                type: string
+              description:
+                type: string
+              purpose:
+                type: string
+              startTime:
+                type: string
+              minAge:
+                type: number
+              maxAge:
+                type: number
+              capacity:
+                type: number
+              gender: 
+                type: string
+      responses:
+        "204":
+          description: Success
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
   /swagger:
     x-swagger-pipe: swagger_raw
 # complex objects have schema definitions
