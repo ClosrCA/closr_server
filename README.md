@@ -1,1 +1,5 @@
-# Skeleton project for Swagger
+# YourTable Server
+
+- Installation: npm install
+
+- Run server: node app
