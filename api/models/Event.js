@@ -13,6 +13,9 @@ var eventSchema = new Schema({
     gender: String,
     attendees: [{ type: Schema.Types.ObjectId, ref: 'User' }],
     author: { type: Schema.Types.ObjectId, ref: 'User' },
+    hasFinished: { type: Boolean, default: false },
+    lng: Number,
+    lat: Number,
     createdAt: { type: Date, default: Date.now() },
     updatedAt: { type: Date, default: Date.now() }
 }, {
