@@ -26,7 +26,7 @@ paths:
       # used as the method name of the controller
       operationId: facebookLogin
       parameters:
-        - name: body
+        - name: authBody
           in: body
           description: facebook token from fb
           required: true
@@ -78,7 +78,7 @@ paths:
           in: header
           type: string
           required: true
-        - name: body
+        - name: profileUpdate
           in: body
           required: true
           description: update user's profile
@@ -111,7 +111,7 @@ paths:
           in: header
           type: string
           required: true
-        - name: body
+        - name: eventCreate
           in: body
           required: true
           description: Event boday
@@ -135,6 +135,10 @@ paths:
                 type: number
               gender: 
                 type: string
+              lng:
+                type: number
+              lat: 
+                type: number
       responses:
         "204":
           description: Success
@@ -150,11 +154,15 @@ definitions:
   Profile:
     type: object
     properties:
+      id:
+        type: string
       facebookID:
         type: string
       firebaseID:
         type: string
       firstname:
+        type: string
+      displayName:
         type: string
       lastname:
         type: string
@@ -172,23 +180,56 @@ definitions:
         type: string
       updatedAt:
         type: string
-  LoginResponse:
-    required:
-      - message
+        
+  Event:
+    type: object
     properties:
-      message:
-        type: object
-        properties:
-          profile: 
-            $ref: "#/definitions/Profile"
-          isNewUser:
-            type: boolean
-          token:
-            type: string
+      id:
+        type: string
+      yelpID:
+        type: string
+      title: 
+        type: string
+      description:
+        type: string
+      purpose:
+        type: string
+      startTime:
+        type: string
+      minAge:
+        type: number
+      maxAge:
+        type: number
+      capacity:
+        type: number
+      gender:
+        type: string
+      attendees:
+        type: array
+        items:
+          $ref: "#/definitions/Profile"
+      author:
+          $ref: "#/definitions/Profile"
+      hasFinished:
+        type: boolean
+      lng: 
+        type: number
+      lat:
+        type: number
+      createdAt:
+        type: string
+      updatedAt:
+        type: string
+        
+  LoginResponse:
+      type: object
+      properties:
+        profile: 
+          $ref: "#/definitions/Profile"
+        isNewUser:
+          type: boolean
+        token:
+          type: string
                 
   ErrorResponse:
-    required:
-      - message
-    properties:
-      message:
-        type: string
+      type: string

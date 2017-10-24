@@ -34,6 +34,7 @@ var UserController = {
                             facebookID: profile.id,
                             firstname: profile.first_name,
                             lastname: profile.last_name,
+                            displayName: profile.first_name,
                             gender: profile.gender,
                             email: profile.email,
                             birthday: profile.birthday,
