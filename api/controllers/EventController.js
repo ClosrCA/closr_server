@@ -19,7 +19,16 @@ var EventController = {
                 if (err) return res.status(500).json(err.message);
                 
                 event.author = user._id;
-                
+
+                var location = {
+                    lng: event.lng,
+                    lat: event.lat
+                };
+                event.location = location;
+
+                delete event.lng;
+                delete event.lat;
+
                 Event.create(event, function (err, _) {
                     if (err) return res.status(500).json(err.message);
 
