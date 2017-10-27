@@ -9,5 +9,6 @@ module.exports = {
 
         if (!body.capacity) return new Error('Missing field: capacity');
 
+        if (!body.lat || !body.lng) return new Error('Missing location info')
     }
 };
