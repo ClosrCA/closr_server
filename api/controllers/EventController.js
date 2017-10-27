@@ -39,12 +39,12 @@ var EventController = {
 
     //GET /event/{id} operationId
     getOne: function(req, res) {
-    var id = req.swagger.params.id.value;
-    Event.findById(id, function (e, event) {
-        if (e) return res.status(500).json(e.message);
+        var id = req.swagger.params.id.value;
+        Event.findById(id, function (e, event) {
+            if (e) return res.status(500).json(e.message);
 
-        res.json({eventDetail: event});
-        })     
+            res.json({eventDetail: event});
+            })     
     },
 
     //GET /event/{page},{pageSize} operationId
