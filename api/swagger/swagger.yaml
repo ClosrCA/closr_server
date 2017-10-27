@@ -147,6 +147,51 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/ErrorResponse"
+  /event/{page},{pageSize}:
+      x-swagger-router-controller: EventController
+      get:
+        description: get a page of events
+        operationId: getOnePage
+        parameters:
+          - name: page
+            type: number
+            in: path
+            required: true
+          - name: pageSize
+            type: number
+            in: path
+            required: true
+            default: 10
+        responses:
+          "200":
+            description: Success
+            schema:
+              $ref: "#/definitions/EventListResponse"
+          # responses may fall through to errors
+          default:
+            description: Error
+            schema:
+              $ref: "#/definitions/ErrorResponse"
+  /event/{id}:
+    x-swagger-router-controller: EventController
+    get:
+      description: get a single event by mongo id
+      operationId: getOne
+      parameters:
+        - name: id
+          type: string
+          in: path
+          required: true
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/Event"
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
   /swagger:
     x-swagger-pipe: swagger_raw
 # complex objects have schema definitions
@@ -180,7 +225,31 @@ definitions:
         type: string
       updatedAt:
         type: string
-        
+  EventListResponse:
+    required:
+      - events
+    properties:
+      events:
+        type: array
+        items:
+          type: object
+          properties:
+            title:
+              type: string
+            purpose:
+              type: string
+            yelpID:
+              type: string
+            capacity:
+              type: number
+            attendeesCount:
+              type: number
+            startTime:
+              type: string
+            authorName:
+              type: string
+            authorAvator:
+              type: string
   Event:
     type: object
     properties:
