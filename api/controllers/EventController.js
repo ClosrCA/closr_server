@@ -44,6 +44,28 @@ var EventController = {
     
     delete: function (req, res) {
         
+    },
+
+    getOne: function(req, res) {
+        var id = req.swagger.params.id.value;
+        Event.findById(id, function (e, event) {
+            if (e) return res.status(500).json(e.message);
+
+            res.json({event: event});
+        })     
+    },
+
+    getEvents: function(req, res) {
+        var page = req.swagger.params.page.value;
+        var pageSize = req.swagger.params.pageSize.value;
+
+        Event.find({ 'hasFinished': false }, function (e, events){
+            if (e) return res.status(500).json(e.message);
+
+            res.json({events: events});
+        })
+        .skip((page-1)*pageSize)
+        .limit(pageSize)
     }
 };
 
