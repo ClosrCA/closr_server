@@ -151,7 +151,7 @@ paths:
       x-swagger-router-controller: EventController
       get:
         description: get a page of events
-        operationId: getOnePage
+        operationId: getEvents
         parameters:
           - name: page
             type: number
@@ -246,9 +246,9 @@ definitions:
               type: number
             startTime:
               type: string
-            authorName:
+            author:
               type: string
-            authorAvator:
+            avatar:
               type: string
   Event:
     type: object

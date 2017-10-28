@@ -37,25 +37,23 @@ var EventController = {
         
     },
 
-    //GET /event/{id} operationId
     getOne: function(req, res) {
-    var id = req.swagger.params.id.value;
-    Event.findById(id, function (e, event) {
-        if (e) return res.status(500).json(e.message);
+        var id = req.swagger.params.id.value;
+        Event.findById(id, function (e, event) {
+            if (e) return res.status(500).json(e.message);
 
-        res.json({eventDetail: event});
+            res.json({event: event});
         })     
     },
 
-    //GET /event/{page},{pageSize} operationId
-    getOnePage: function(req, res) {
+    getEvents: function(req, res) {
         var page = req.swagger.params.page.value;
         var pageSize = req.swagger.params.pageSize.value;
 
-        Event.find({ 'hasFinished': false }, function (e, eventList){
+        Event.find({ 'hasFinished': false }, function (e, events){
             if (e) return res.status(500).json(e.message);
 
-            res.json({events: eventList});
+            res.json({events: events});
         })
         .skip((page-1)*pageSize)
         .limit(pageSize)
