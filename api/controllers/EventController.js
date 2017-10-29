@@ -47,6 +47,7 @@ var EventController = {
         if (req.body.purpose)       eventWithNewProperties.purpose = req.body.purpose;
         if (req.body.minAge)        eventWithNewProperties.minAge = req.body.minAge;
         if (req.body.maxAge)        eventWithNewProperties.maxAge = req.body.maxAge;
+        eventWithNewProperties.updatedAt = Date.now();
 
         Event.findOneAndUpdate(id, eventWithNewProperties,function (err, _) {
             if (err) return res.status(500).json(err.message);
