@@ -39,15 +39,44 @@ var EventController = {
     },
     
     update: function (req, res) {
-        
+        var id = req.swagger.params.id.value;
+        var eventWithNewProperties = {};
+
+        if (req.body.title)         eventWithNewProperties.title = req.body.title;
+        if (req.body.description)   eventWithNewProperties.description = req.body.description;
+        if (req.body.purpose)       eventWithNewProperties.purpose = req.body.purpose;
+        if (req.body.minAge)        eventWithNewProperties.minAge = req.body.minAge;
+        if (req.body.maxAge)        eventWithNewProperties.maxAge = req.body.maxAge;
+
+        Event.findOneAndUpdate(id, eventWithNewProperties,function (err, _) {
+            if (err) return res.status(500).json(err.message);
+
+            res.status(204).send()
+        })
     },
     
     delete: function (req, res) {
         
     },
 
+    addOneAttendee: function (req, res) {
+        var token = req.headers.authorization;
+        var eventId = req.body.id;
+
+        auth.verifyToken(token, function (err, userID) {
+            if (err) return res.status(401).json(err.message);
+
+            Event.findByIdAndUpdate(eventId, {$push : {attendees : userID}}, function (err, _) {
+                if (err) return res.status(500).json(err.message);
+
+                res.status(204).send()
+            })
+        })
+    },
+
     getOne: function(req, res) {
         var id = req.swagger.params.id.value;
+
         Event.findById(id, function (e, event) {
             if (e) return res.status(500).json(e.message);
 
