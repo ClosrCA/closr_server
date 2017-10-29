@@ -5,7 +5,7 @@ var validator = require('../utils/validator');
 
 var EventController = {
 
-    create: function (req, res) {
+    createEvent: function (req, res) {
         var token = req.headers.authorization;
         var event = req.body;
 
@@ -20,11 +20,10 @@ var EventController = {
                 
                 event.author = user._id;
 
-                var location = {
+                event.location = {
                     lng: event.lng,
                     lat: event.lat
                 };
-                event.location = location;
 
                 delete event.lng;
                 delete event.lat;

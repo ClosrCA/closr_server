@@ -12,6 +12,7 @@ var userSchema = new Schema({
     email: String,
     phone: String,
     avatar: String,
+    isAdmin: { type: Boolean, default: false },
     createdAt: { type: Date, default: Date.now() },
     updatedAt: { type: Date, default: Date.now() }
 }, {
