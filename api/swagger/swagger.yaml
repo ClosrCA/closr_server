@@ -147,31 +147,6 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/ErrorResponse"
-  /update/event:
-      x-swagger-router-controller: EventController
-      put:
-        description: add user id to attendees when user joins an event
-        operationId: addOneAttendee
-        parameters:
-          - name: Authorization
-            type: string
-            in: header
-            required: true
-          - name: id
-            in: body
-            required: true
-            schema:
-              properties:
-                id:
-                  type: string
-        responses:
-          "204":
-            description: Success
-          # responses may fall through to errors
-          default:
-            description: Error
-            schema:
-              $ref: "#/definitions/ErrorResponse"
   /event/{page},{pageSize}:
       x-swagger-router-controller: EventController
       get:
@@ -225,6 +200,10 @@ paths:
         description: event id
         type: string
         in: path
+        required: true
+      - name: Authorization
+        type: string
+        in: header
         required: true
       - name: eventUpdate
         description: event body
