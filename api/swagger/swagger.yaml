@@ -147,6 +147,35 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/ErrorResponse"
+  /event/{lng},{lat},{radius}:
+    x-swagger-router-controller: EventController
+    get:
+      description: get events within a radius
+      operationId: getNearestEvents
+      parameters:
+        - name: lng
+          type: number
+          in: path
+          required: true
+        - name: lat
+          type: number
+          in: path
+          required: true
+        - name: radius
+          type: number
+          in: path
+          required: true
+          default: 5
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/EventListResponse"
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
   /event/{page},{pageSize}:
       x-swagger-router-controller: EventController
       get:
@@ -192,6 +221,22 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/ErrorResponse"
+    delete:
+      description: delete a single event by mongo id
+      operationId: delete
+      parameters:
+        - name: id
+          type: string
+          in: path
+          required: true
+      responses:
+        "204":
+          description: Success
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"   
     put:
       description: update a single event by mongo id
       operationId: update
