@@ -1,6 +1,7 @@
 var Event = require('../models/Event');
 var User = require('../models/User');
 var auth = require('../utils/auth');
+var distCalc = require('../utils/distCalc');
 var validator = require('../utils/validator');
 
 var EventController = {
@@ -75,7 +76,13 @@ var EventController = {
     },
     
     delete: function (req, res) {
-        
+        var id = req.swagger.params.id.value;
+
+        Event.findOneAndRemove(id, function (e) {
+            if (e) return res.status(500).json(e.message);
+
+            res.status(204).send()
+        })     
     },
 
     getOne: function(req, res) {
@@ -86,6 +93,27 @@ var EventController = {
 
             res.json({event: event});
         })     
+    },
+
+    getNearestEvents: function(req, res) {
+        var lng = req.swagger.params.lng.value;
+        var lat = req.swagger.params.lat.value;
+        var radius = req.swagger.params.radius.value;
+
+        Event.find({ 'hasFinished': false }, function (e, events){
+            if (e) return res.status(500).json(e.message);
+
+            var retEvents = [];
+            for(var i = 0; i< events.length; i ++){
+                var event = events[i];
+                var dist = distCalc.calcDistBetweenTwoPoints(lat, lng, event.location.lat, event.location.lng);
+
+                if(dist <= radius)
+                    retEvents.push(event);
+            }
+
+            res.json({events: retEvents});
+        })
     },
 
     getEvents: function(req, res) {
