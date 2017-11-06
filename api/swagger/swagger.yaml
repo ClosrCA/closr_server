@@ -147,25 +147,40 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/ErrorResponse"
-  /event/{lng},{lat},{radius}:
+  /events/:
     x-swagger-router-controller: EventController
     get:
-      description: get events within a radius
-      operationId: getNearestEvents
+      description: get pagenated events within a radius or by created time if user location is not provided
+      operationId: getEvents
       parameters:
-        - name: lng
+        - name: sortBy
+          type: string
+          in: header
+          default: ""
+          description: order by distance by default, can also be "-createdAt" if we wanna order by created time.
+        - name: page
           type: number
-          in: path
+          in: header
           required: true
+          default: 1
+        - name: pageSize
+          type: number
+          in: header
+          required: true
+          default: 10
         - name: lat
           type: number
-          in: path
-          required: true
+          in: header
+          description: maybe we should default it to user current location ??
+        - name: lng
+          type: number
+          in: header
+          description: maybe we should default it to user current location ??
         - name: radius
           type: number
-          in: path
-          required: true
-          default: 5
+          in: header
+          default: 10000
+          description: we are using meter as base UNIT
       responses:
         "200":
           description: Success
@@ -176,31 +191,6 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/ErrorResponse"
-  /event/{page},{pageSize}:
-      x-swagger-router-controller: EventController
-      get:
-        description: get a page of events
-        operationId: getEvents
-        parameters:
-          - name: page
-            type: number
-            in: path
-            required: true
-          - name: pageSize
-            type: number
-            in: path
-            required: true
-            default: 10
-        responses:
-          "200":
-            description: Success
-            schema:
-              $ref: "#/definitions/EventListResponse"
-          # responses may fall through to errors
-          default:
-            description: Error
-            schema:
-              $ref: "#/definitions/ErrorResponse"
   /event/{id}:
     x-swagger-router-controller: EventController
     get:
