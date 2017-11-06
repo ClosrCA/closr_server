@@ -95,38 +95,47 @@ var EventController = {
         })     
     },
 
-    getNearestEvents: function(req, res) {
-        var lng = req.swagger.params.lng.value;
-        var lat = req.swagger.params.lat.value;
-        var radius = req.swagger.params.radius.value;
-
-        Event.find({ 'hasFinished': false }, function (e, events){
-            if (e) return res.status(500).json(e.message);
-
-            var retEvents = [];
-            for(var i = 0; i< events.length; i ++){
-                var event = events[i];
-                var dist = distCalc.calcDistBetweenTwoPoints(lat, lng, event.location.lat, event.location.lng);
-
-                if(dist <= radius)
-                    retEvents.push(event);
-            }
-
-            res.json({events: retEvents});
-        })
-    },
-
     getEvents: function(req, res) {
+        var sortOption = req.swagger.params.sortBy.value;
         var page = req.swagger.params.page.value;
         var pageSize = req.swagger.params.pageSize.value;
 
-        Event.find({ 'hasFinished': false }, function (e, events){
-            if (e) return res.status(500).json(e.message);
+        var lng = req.swagger.params.lng.value;
+        var lat = req.swagger.params.lat.value;
+        var radius = req.swagger.params.radius.value;
+        
+        if(lat && lng){
+            Event.find(
+                { location :
+                    { $near :
+                        {
+                            $geometry : {
+                                type : "Point" ,
+                                coordinates : [lng, lat] },
+                            $maxDistance : radius
+                        }
+                    }
+                }, function (e, events){
+                    if (e) return res.status(500).json(e.message);
 
-            res.json({events: events});
-        })
-        .skip((page-1)*pageSize)
-        .limit(pageSize)
+                    res.json({events: events});
+            })
+            .sort(sortOption)
+            .skip((page-1)*pageSize)
+            .limit(pageSize)
+        } else {
+            // we should order by create time if user location is not provided.
+            sortOption = '-createdAt';
+
+            Event.find({}, function (e, events) {
+                if (e) return res.status(500).json(e.message);
+    
+                res.json({events: events});
+            })
+            .sort(sortOption)
+            .skip((page-1)*pageSize)
+            .limit(pageSize)
+        }
     }
 };
 
