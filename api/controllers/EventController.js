@@ -1,7 +1,6 @@
 var Event = require('../models/Event');
 var User = require('../models/User');
 var auth = require('../utils/auth');
-var distCalc = require('../utils/distCalc');
 var validator = require('../utils/validator');
 
 var EventController = {
