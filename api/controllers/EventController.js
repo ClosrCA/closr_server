@@ -104,8 +104,8 @@ var EventController = {
         
         if (isValid) {
             Event.find(
-                { location :
-                    { $near :
+                { 'hasFinished': false,
+                    location : { $near :
                         {
                             $geometry : {
                                 type : "Point" ,
@@ -124,7 +124,7 @@ var EventController = {
             // we should order by create time if user location is not provided.
             sortOption = '-createdAt';
 
-            Event.find({}, function (e, events) {
+            Event.find({'hasFinished': false}, function (e, events) {
                 if (e) return res.status(500).json(e.message);
     
                 res.json({events: events});
