@@ -96,15 +96,15 @@ var EventController = {
     },
 
     getEvents: function(req, res) {
-        var sortOption = req.swagger.params.sortBy.value;
         var page = req.swagger.params.page.value;
         var pageSize = req.swagger.params.pageSize.value;
 
         var lng = req.swagger.params.lng.value;
         var lat = req.swagger.params.lat.value;
         var radius = req.swagger.params.radius.value;
+        var isValid = validator.validateCoordination(lat, lng);
         
-        if(lat && lng){
+        if (isValid) {
             Event.find(
                 { location :
                     { $near :
@@ -120,7 +120,6 @@ var EventController = {
 
                     res.json({events: events});
             })
-            .sort(sortOption)
             .skip((page-1)*pageSize)
             .limit(pageSize)
         } else {

@@ -153,33 +153,29 @@ paths:
       description: get pagenated events within a radius or by created time if user location is not provided
       operationId: getEvents
       parameters:
-        - name: sortBy
-          type: string
-          in: header
-          default: ""
-          description: order by distance by default, can also be "-createdAt" if we wanna order by created time.
         - name: page
           type: number
-          in: header
+          in: query
           required: true
           default: 1
         - name: pageSize
           type: number
-          in: header
+          in: query
           required: true
           default: 10
         - name: lat
           type: number
-          in: header
-          description: maybe we should default it to user current location ??
+          in: query
+          required: true
         - name: lng
           type: number
-          in: header
-          description: maybe we should default it to user current location ??
+          in: query
+          required: true
         - name: radius
           type: number
-          in: header
+          in: query
           default: 10000
+          required: true
           description: we are using meter as base UNIT
       responses:
         "200":
