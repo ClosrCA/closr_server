@@ -230,10 +230,10 @@ paths:
           schema:
             $ref: "#/definitions/ErrorResponse"
   /restaurant:
-    x-swagger-router-controller: RestaurantController
+    x-swagger-router-controller: PromotionController
     post:
       description: Uploads csv file of restaurant/promotion info, admin required.
-      operationId: createRestaurant
+      operationId: createPromotion
       consumes:
         - multipart/form-data
       parameters:
@@ -241,7 +241,7 @@ paths:
           in: header
           type: string
           required: true
-        - name: uploadFile
+        - name: upload
           in: formData
           type: file
           required: true
