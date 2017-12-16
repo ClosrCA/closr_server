@@ -15,8 +15,6 @@ var eventSchema = new Schema({
     author: { type: Schema.Types.ObjectId, ref: 'User' },
     hasFinished: { type: Boolean, default: false },
     location: { lng: Number, lat: Number },
-    lng: Number,
-    lat: Number,
     createdAt: { type: Date, default: Date.now() },
     updatedAt: { type: Date, default: Date.now() }
 }, {

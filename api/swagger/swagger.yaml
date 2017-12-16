@@ -105,7 +105,7 @@ paths:
     x-swagger-router-controller: EventController
     post:
       description: Create event with authorized user
-      operationId: create
+      operationId: createEvent
       parameters:
         - name: Authorization
           in: header
@@ -225,6 +225,27 @@ paths:
         "204":
           description: Success
         # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /restaurant:
+    x-swagger-router-controller: PromotionController
+    post:
+      description: Uploads csv file of restaurant/promotion info, admin required.
+      operationId: createPromotion
+      consumes:
+        - multipart/form-data
+      parameters:
+        - name: Authorization
+          in: header
+          type: string
+          required: true
+        - name: upload
+          in: formData
+          type: file
+          required: true
+      responses:
         default:
           description: Error
           schema:

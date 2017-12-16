@@ -5,7 +5,7 @@ var validator = require('../utils/validator');
 
 var EventController = {
 
-    create: function (req, res) {
+    createEvent: function (req, res) {
         var token = req.headers.authorization;
         var event = req.body;
 
@@ -20,11 +20,10 @@ var EventController = {
                 
                 event.author = user._id;
 
-                var location = {
+                event.location = {
                     lng: event.lng,
                     lat: event.lat
                 };
-                event.location = location;
 
                 delete event.lng;
                 delete event.lat;
@@ -49,16 +48,16 @@ var EventController = {
                 if (err) return res.status(500).json(err.message);
 
                 if(userID == event.author){
-                    var eventWithNewProperties = {};
+                    var update = {};
                     
-                    if (req.body.title)         eventWithNewProperties.title = req.body.title;
-                    if (req.body.description)   eventWithNewProperties.description = req.body.description;
-                    if (req.body.purpose)       eventWithNewProperties.purpose = req.body.purpose;
-                    if (req.body.minAge)        eventWithNewProperties.minAge = req.body.minAge;
-                    if (req.body.maxAge)        eventWithNewProperties.maxAge = req.body.maxAge;
-                    eventWithNewProperties.updatedAt = Date.now();
+                    if (req.body.title)         update.title = req.body.title;
+                    if (req.body.description)   update.description = req.body.description;
+                    if (req.body.purpose)       update.purpose = req.body.purpose;
+                    if (req.body.minAge)        update.minAge = req.body.minAge;
+                    if (req.body.maxAge)        update.maxAge = req.body.maxAge;
+                    update.updatedAt = Date.now();
             
-                    Event.findOneAndUpdate(eventId, eventWithNewProperties,function (err, _) {
+                    Event.findOneAndUpdate(eventId, update,function (err, _) {
                         if (err) return res.status(500).json(err.message);
             
                         res.status(204).send()
