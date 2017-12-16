@@ -147,31 +147,46 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/ErrorResponse"
-  /event/{page},{pageSize}:
-      x-swagger-router-controller: EventController
-      get:
-        description: get a page of events
-        operationId: getEvents
-        parameters:
-          - name: page
-            type: number
-            in: path
-            required: true
-          - name: pageSize
-            type: number
-            in: path
-            required: true
-            default: 10
-        responses:
-          "200":
-            description: Success
-            schema:
-              $ref: "#/definitions/EventListResponse"
-          # responses may fall through to errors
-          default:
-            description: Error
-            schema:
-              $ref: "#/definitions/ErrorResponse"
+  /events/:
+    x-swagger-router-controller: EventController
+    get:
+      description: get pagenated events within a radius or by created time if user location is not provided
+      operationId: getEvents
+      parameters:
+        - name: page
+          type: number
+          in: query
+          required: true
+          default: 1
+        - name: pageSize
+          type: number
+          in: query
+          required: true
+          default: 10
+        - name: lat
+          type: number
+          in: query
+          required: true
+        - name: lng
+          type: number
+          in: query
+          required: true
+        - name: radius
+          type: number
+          in: query
+          default: 10000
+          required: true
+          description: we are using meter as base UNIT
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/EventListResponse"
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
   /event/{id}:
     x-swagger-router-controller: EventController
     get:
@@ -192,6 +207,22 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/ErrorResponse"
+    delete:
+      description: delete a single event by mongo id
+      operationId: delete
+      parameters:
+        - name: id
+          type: string
+          in: path
+          required: true
+      responses:
+        "204":
+          description: Success
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"   
     put:
       description: update a single event by mongo id
       operationId: update
