@@ -74,13 +74,36 @@ var EventController = {
     },
     
     delete: function (req, res) {
-        var id = req.swagger.params.id.value;
+        var eventId = req.swagger.params.id.value;
+        var token = req.headers.authorization;
 
-        Event.findOneAndRemove(id, function (e) {
-            if (e) return res.status(500).json(e.message);
+        auth.verifyToken(token, function (err, userID) {
+            if (err) return res.status(401).json(err.message);
 
-            res.status(204).send()
-        })     
+            User.findById(userID, function(err, user){
+                if(user.isAdmin){
+                    Event.findByIdAndRemove(eventId, function (e) {
+                        if (e) return res.status(500).json(e.message);
+            
+                        res.status(204).send()
+                    })   
+                } else {
+                    Event.findById(eventId, function(err, event){
+                        if (err) return res.status(500).json(err.message);
+        
+                        if(userID == event.author){
+                            Event.findByIdAndRemove(eventId, function (e) {
+                                if (e) return res.status(500).json(e.message);
+                    
+                                res.status(204).send()
+                            }) 
+                        } else {
+                            return res.status(500).json("Only admin user or event author can delete an event.");
+                        }
+                    })
+                }
+            })
+        })
     },
 
     getOne: function(req, res) {

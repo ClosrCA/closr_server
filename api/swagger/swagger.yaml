@@ -211,6 +211,10 @@ paths:
       description: delete a single event by mongo id
       operationId: delete
       parameters:
+        - name: Authorization
+          type: string
+          in: header
+          required: true
         - name: id
           type: string
           in: path
