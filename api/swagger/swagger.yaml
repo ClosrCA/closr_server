@@ -231,6 +231,28 @@ paths:
             $ref: "#/definitions/ErrorResponse"
   /restaurant:
     x-swagger-router-controller: PromotionController
+    get:
+      description: get restaurant detailed info by yelp id
+      operationId: getRestaurantById
+      parameters:
+        - name: Authorization
+          type: string
+          in: header
+          required: true
+        - name: id
+          type: string
+          in: query
+          required: true
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/Restaurant"
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
     post:
       description: Uploads csv file of restaurant/promotion info, admin required.
       operationId: createPromotion
@@ -348,6 +370,74 @@ definitions:
       updatedAt:
         type: string
         
+  Restaurant:
+    type: object
+    properties:
+      id: 
+        type: string
+      name:
+        type: string
+      image_url:
+        type: string
+      url:
+        type: string
+      is_claimed:
+        type: boolean
+      is_closed:
+        type: boolean
+      phone: 
+        type: string
+      categories:
+        type: object
+        properties:
+          alias:
+            type: string
+          title:
+            type: string
+      rating:
+        type: number
+      location:
+        type: object
+        properties:
+          address1:
+            type: string
+          address2:
+            type: string
+          address3:
+            type: string
+          city:
+            type: string
+          zip_code:
+            type: string
+          country:
+            type: string
+          state:
+            type: string
+          display_address:
+            type: array
+            items:
+              type: string
+          cross_streets:
+            type: string
+      coordinates:
+        type: object
+        properties:
+          latitude:
+            type: number
+          longitude:
+            type: number
+      photos:
+        type: array
+        items:
+          type: string
+      hours:
+        type: object
+        properties:
+          hours_type:
+            type: string
+          is_open_now:
+            type: boolean
+  
   LoginResponse:
       type: object
       properties:
