@@ -166,17 +166,19 @@ paths:
         - name: lat
           type: number
           in: query
-          required: true
         - name: lng
           type: number
           in: query
-          required: true
         - name: radius
           type: number
           in: query
           default: 10000
           required: true
           description: we are using meter as base UNIT
+        - name: search  
+          type: string
+          in: query
+          description: match event title or description
       responses:
         "200":
           description: Success
