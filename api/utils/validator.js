@@ -10,5 +10,9 @@ module.exports = {
         if (!body.capacity) return new Error('Missing field: capacity');
 
         if (!body.lat || !body.lng) return new Error('Missing location info')
+    },
+
+    validateCoordination: function(lat, lng) {
+        return (lat >= -90 && lat <= 90) && (lng >= -180 && lng <= 180);
     }
 };

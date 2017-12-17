@@ -74,7 +74,36 @@ var EventController = {
     },
     
     delete: function (req, res) {
+        var eventId = req.swagger.params.id.value;
+        var token = req.headers.authorization;
+
+        auth.verifyToken(token, function (err, userID) {
+            if (err) return res.status(401).json(err.message);
+
+            User.findById(userID, function(err, user){
+                if(user.isAdmin){
+                    Event.findByIdAndRemove(eventId, function (e) {
+                        if (e) return res.status(500).json(e.message);
+            
+                        res.status(204).send()
+                    })   
+                } else {
+                    Event.findById(eventId, function(err, event){
+                        if (err) return res.status(500).json(err.message);
         
+                        if(userID == event.author){
+                            Event.findByIdAndRemove(eventId, function (e) {
+                                if (e) return res.status(500).json(e.message);
+                    
+                                res.status(204).send()
+                            }) 
+                        } else {
+                            return res.status(500).json("Only admin user or event author can delete an event.");
+                        }
+                    })
+                }
+            })
+        })
     },
 
     getOne: function(req, res) {
@@ -91,13 +120,42 @@ var EventController = {
         var page = req.swagger.params.page.value;
         var pageSize = req.swagger.params.pageSize.value;
 
-        Event.find({ 'hasFinished': false }, function (e, events){
-            if (e) return res.status(500).json(e.message);
+        var lng = req.swagger.params.lng.value;
+        var lat = req.swagger.params.lat.value;
+        var radius = req.swagger.params.radius.value;
+        var isValid = validator.validateCoordination(lat, lng);
+        
+        if (isValid) {
+            Event.find(
+                { 'hasFinished': false,
+                    location : { $near :
+                        {
+                            $geometry : {
+                                type : "Point" ,
+                                coordinates : [lng, lat] },
+                            $maxDistance : radius
+                        }
+                    }
+                }, function (e, events){
+                    if (e) return res.status(500).json(e.message);
 
-            res.json({events: events});
-        })
-        .skip((page-1)*pageSize)
-        .limit(pageSize)
+                    res.json({events: events});
+            })
+            .skip((page-1)*pageSize)
+            .limit(pageSize)
+        } else {
+            // we should order by create time if user location is not provided.
+            sortOption = '-createdAt';
+
+            Event.find({'hasFinished': false}, function (e, events) {
+                if (e) return res.status(500).json(e.message);
+    
+                res.json({events: events});
+            })
+            .sort(sortOption)
+            .skip((page-1)*pageSize)
+            .limit(pageSize)
+        }
     }
 };
 
