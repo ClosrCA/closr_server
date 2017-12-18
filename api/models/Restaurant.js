@@ -1,3 +1,5 @@
+// NOTE: It is not used for database data model
+// -- Only for reference.
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 

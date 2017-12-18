@@ -1,5 +1,4 @@
 var Promotion = require('../models/Promotion');
-var Restaurant = require('../models/Restaurant');
 var User = require('../models/User');
 var auth = require('../utils/auth');
 var csv = require('fast-csv');
