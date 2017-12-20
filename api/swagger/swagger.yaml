@@ -235,10 +235,6 @@ paths:
       description: get restaurant detailed info by yelp id
       operationId: getRestaurantById
       parameters:
-        - name: Authorization
-          type: string
-          in: header
-          required: true
         - name: id
           type: string
           in: query

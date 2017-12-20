@@ -3,6 +3,7 @@ var User = require('../models/User');
 var auth = require('../utils/auth');
 var csv = require('fast-csv');
 var superagent = require('superagent');
+var yelpAPIKEY = 'Bearer WdCKkVBICcEcVeO8C96lCEcTTkog2L9cP2VaRSyaaYUck0CdJNguo40wmyCV4pd7sE5knHHuLG6HKejNqRr41oCkxhMU565DV8kYUshzRkcMo8t8aclSwZaCcpE1WnYx';
 
 var PromotionController = {
     createPromotion: function (req, res) {
@@ -40,11 +41,10 @@ var PromotionController = {
 
     getRestaurantById: function(req, res) {
         var id = req.swagger.params.id.value;
-        var token = req.headers.authorization;
 
         superagent
         .get('https://api.yelp.com/v3/businesses/'+ id)
-        .set('Authorization', token)
+        .set('Authorization', yelpAPIKEY)
         .set('Accept', 'application/json')
         .end((err, data) => {
             if (err) { return console.log(err); }
