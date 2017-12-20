@@ -31,7 +31,7 @@ var EventController = {
                 Event.create(event, function (err, _) {
                     if (err) return res.status(500).json(err.message);
 
-                    res.status(204).send()
+                    return res.status(200).json(_._id);
                 })
             })
         })

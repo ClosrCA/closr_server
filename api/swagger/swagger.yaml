@@ -140,8 +140,10 @@ paths:
               lat: 
                 type: number
       responses:
-        "204":
+        "200":
           description: Success
+          schema:
+            $ref: "#/definitions/SuccessResponse"
         # responses may fall through to errors
         default:
           description: Error
@@ -394,6 +396,9 @@ definitions:
           type: boolean
         token:
           type: string
+     
+  SuccessResponse:
+      type: string
                 
   ErrorResponse:
       type: string

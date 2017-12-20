@@ -13,9 +13,37 @@ chai.use(chaiHttp);
 describe('Events Search', () => {
 	
 	describe('/GET /events', () => {
+
+	var id;
+
+	it('it should create an event', (done) => {
+		let event = {
+				"yelpID": "01",
+				"title": "test",
+				"description": "test",
+				"purpose": "test",
+				"startTime": "22",
+				"minAge": 11,
+				"maxAge": 22,
+				"capacity": 22,
+				"gender": "m",
+				"lng": 22,
+				"lat": 22
+		};
+			chai.request(server)
+			.post('/create/event')
+			.set('Authorization', token)
+			.send(event)
+			.end((err, res) => {
+				id = res.body;
+				res.should.have.status(200);
+				done();
+			});
+		});
+
 	it('update one event title to TORONTO', (done) => {
 		chai.request(server)
-		.put('/event/' + '59fa7b35c121b4197441860e')
+		.put('/event/' + id)
 		.set('Authorization', token)
 		.send({"title": "TORONTO",
 			  "description": "update",
@@ -44,7 +72,7 @@ describe('Events Search', () => {
 	
 	it('update one event description to MonTreal', (done) => {
 		chai.request(server)
-		.put('/event/' + '59fa7b35c121b4197441860e')
+		.put('/event/' + id)
 		.set('Authorization', token)
 		.send({"title": "TORONTO",
 			  "description": "MonTreal",
@@ -93,17 +121,41 @@ describe('Events Search', () => {
 			});
 		});
 	
-	it('Try to find most recently created events WITHOUT search query', (done) => {
+	it('Clean up test event', (done) => {
 		chai.request(server)
-		.get('/events/' + '?page=1&pageSize=10&radius=10000')
+		.delete('/event/' + id)
+		.set('Authorization', token)
 		.end((err, res) => {
-			res.should.have.status(200);
-			res.body.events.should.be.a('array');
-			res.body.events.length.should.be.eql(10);
+			res.should.have.status(204);
 			done();
 			});
 		});
 		
+	it('it should create an event', (done) => {
+		let event = {
+				"yelpID": "01",
+				"title": "starbucks",
+				"description": "starbucks",
+				"purpose": "coffee",
+				"startTime": "22",
+				"minAge": 11,
+				"maxAge": 22,
+				"capacity": 22,
+				"gender": "m",
+				"lng": 50,
+				"lat": 50
+		};
+			chai.request(server)
+			.post('/create/event')
+			.set('Authorization', token)
+			.send(event)
+			.end((err, res) => {
+				id = res.body;
+				res.should.have.status(200);
+				done();
+			});
+		});
+	
 	it('Try to find a starbucks event close to lat:50 lng:50', (done) => {
 		chai.request(server)
 		.get('/events/' + '?page=1&pageSize=10&lat=50&lng=50&radius=10000')
@@ -126,6 +178,16 @@ describe('Events Search', () => {
 			});
 		});
 		
+	it('Clean up test event', (done) => {
+		chai.request(server)
+		.delete('/event/' + id)
+		.set('Authorization', token)
+		.end((err, res) => {
+			res.should.have.status(204);
+			done();
+			});
+		});
+
 	});
 });
 
