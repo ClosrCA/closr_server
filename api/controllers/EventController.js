@@ -2,6 +2,9 @@ var Event = require('../models/Event');
 var User = require('../models/User');
 var auth = require('../utils/auth');
 var validator = require('../utils/validator');
+var superagent = require('superagent');
+var yelpAPIKEY = 'Bearer WdCKkVBICcEcVeO8C96lCEcTTkog2L9cP2VaRSyaaYUck0CdJNguo40wmyCV4pd7sE5knHHuLG6HKejNqRr41oCkxhMU565DV8kYUshzRkcMo8t8aclSwZaCcpE1WnYx';
+var Restaurant = require('../models/Restaurant');
 
 var EventController = {
 
@@ -27,12 +30,37 @@ var EventController = {
 
                 delete event.lng;
                 delete event.lat;
+                
+                superagent
+                .get('https://api.yelp.com/v3/businesses/'+ event.yelpID)
+                .set('Authorization', yelpAPIKEY)
+                .set('Accept', 'application/json')
+                .end((err, data) => {
+                    if (err) { return console.log(err); }
 
-                Event.create(event, function (err, _) {
-                    if (err) return res.status(500).json(err.message);
-
-                    return res.status(200).json(_._id);
-                })
+                    var isValid = false;
+                    var startTime = new Date(event.startTime);
+                    var day = startTime.getDay();
+                    var time = "" + startTime.getHours() + startTime.getMinutes();
+            
+                    data.body.hours.forEach(function(element) {
+                        element.open.forEach(function(entry){
+                            if(day == entry.day){
+                                isValid = (time > entry.start && time < entry.end);
+                            }
+                        })
+                    });
+                    
+                    if(isValid){
+                        Event.create(event, function (err, _) {
+                            if (err) return res.status(500).json(err.message);
+        
+                            return res.status(200).json(_._id);
+                        })
+                    } else {
+                        return res.status(500).json("Event can't be created when the restaurant is closed.");
+                    }
+                });
             })
         })
     },
