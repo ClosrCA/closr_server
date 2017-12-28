@@ -18,11 +18,13 @@ consumes:
 produces:
   - application/json
 paths:
-  /auth/facebook:
+  /login/facebook:
     # binds a127 app logic to a route
     x-swagger-router-controller: UserController
     post:
       description: Returns user's profile and auth token
+      tags:
+        - authentication
       # used as the method name of the controller
       operationId: facebookLogin
       parameters:
@@ -50,6 +52,8 @@ paths:
     x-swagger-router-controller: UserController
     get:
       description: Returns user's profile
+      tags:
+        - authentication
       operationId: getMyProfile
       parameters:
         - name: Authorization
@@ -67,11 +71,10 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/ErrorResponse"
-  /update/profile:
-     # binds a127 app logic to a route
-    x-swagger-router-controller: UserController
     put:
       description: Returns user's profile
+      tags:
+        - authentication
       operationId: updateProfile
       parameters:
         - name: Authorization
@@ -105,6 +108,8 @@ paths:
     x-swagger-router-controller: EventController
     post:
       description: Create event with authorized user
+      tags:
+        - event
       operationId: createEvent
       parameters:
         - name: Authorization
@@ -153,6 +158,8 @@ paths:
     x-swagger-router-controller: EventController
     get:
       description: get pagenated events within a radius or by created time if user location is not provided
+      tags:
+        - event
       operationId: getEvents
       parameters:
         - name: page
@@ -185,7 +192,11 @@ paths:
         "200":
           description: Success
           schema:
-            $ref: "#/definitions/EventListResponse"
+            properties:
+              events:
+                type: array
+                items:
+                  $ref: "#/definitions/Event"
         # responses may fall through to errors
         default:
           description: Error
@@ -195,6 +206,8 @@ paths:
     x-swagger-router-controller: EventController
     get:
       description: get a single event by mongo id
+      tags:
+        - event
       operationId: getOne
       parameters:
         - name: id
@@ -205,7 +218,11 @@ paths:
         "200":
           description: Success
           schema:
-            $ref: "#/definitions/Event"
+            properties:
+              events:
+                type: array
+                items:
+                  $ref: "#/definitions/Event"
         # responses may fall through to errors
         default:
           description: Error
@@ -233,6 +250,8 @@ paths:
             $ref: "#/definitions/ErrorResponse"   
     put:
       description: update a single event by mongo id
+      tags:
+        - event
       operationId: update
       parameters:
       - name: id
@@ -272,6 +291,8 @@ paths:
     x-swagger-router-controller: PromotionController
     get:
       description: get restaurant detailed info by yelp id
+      tags:
+        - restaurant
       operationId: getRestaurantById
       parameters:
         - name: id
@@ -288,8 +309,13 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/ErrorResponse"
+            
+  /promotions:
+    x-swagger-router-controller: PromotionController
     post:
       description: Uploads csv file of restaurant/promotion info, admin required.
+      tags:
+        - promotion
       operationId: createPromotion
       consumes:
         - multipart/form-data
@@ -303,6 +329,72 @@ paths:
           type: file
           required: true
       responses:
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+    get:
+      description: Get a list of nearby promotions.
+      tags:
+        - promotion
+      operationId: getPromotions
+      parameters:
+        - name: page
+          type: number
+          in: query
+          required: true
+          default: 1
+        - name: pageSize
+          type: number
+          in: query
+          required: true
+          default: 10
+        - name: lat
+          type: number
+          in: query
+        - name: lng
+          type: number
+          in: query
+        - name: radius
+          type: number
+          in: query
+          default: 10000
+          required: true
+          description: we are using meter as base UNIT
+      responses:
+        "200":
+          description: Success
+          schema:
+            properties:
+              promotions:
+                type: array
+                items:
+                  $ref: "#/definitions/Promotion"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /promotions/{id}:
+    x-swagger-router-controller: PromotionController
+    get:
+      description: get a single promotion by mongo id.
+      tags:
+        - promotion
+      operationId: getPromotionById
+      parameters:
+        - name: id
+          type: string
+          in: path
+          required: true
+      responses:
+        "200":
+          description: Success
+          schema:
+            properties:
+              promotions:
+                type: array
+                items:
+                  $ref: "#/definitions/Promotion"
         default:
           description: Error
           schema:
@@ -340,31 +432,6 @@ definitions:
         type: string
       updatedAt:
         type: string
-  EventListResponse:
-    required:
-      - events
-    properties:
-      events:
-        type: array
-        items:
-          type: object
-          properties:
-            title:
-              type: string
-            purpose:
-              type: string
-            yelpID:
-              type: string
-            capacity:
-              type: number
-            attendeesCount:
-              type: number
-            startTime:
-              type: string
-            author:
-              type: string
-            avatar:
-              type: string
   Event:
     type: object
     properties:
@@ -472,7 +539,51 @@ definitions:
             type: string
           is_open_now:
             type: boolean
-  
+
+  Promotion:
+    type: object
+    properties:
+      yelpID:
+        type: string
+      name:
+        type: string
+      contact:
+        type: string
+      email:
+        type: string
+        format: email
+      phone:
+        type: string
+        format: phone
+      country:
+        type: string
+      province:
+        type: string
+      city:
+        type: string
+      street:
+        type: string
+      promotionType:
+        type: string
+        enum: [featured, discount, deal]
+      startDate:
+        type: string
+      endDate:
+        type: string
+      startHour:
+        type: string
+      endHour:
+        type: string
+      price:
+        type: string
+      amount:
+        type: number
+      item:
+        type: string
+      images:
+        type: array
+        items: 
+          type: string
   LoginResponse:
       type: object
       properties:
