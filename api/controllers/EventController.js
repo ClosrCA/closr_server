@@ -2,8 +2,41 @@ var Event = require('../models/Event');
 var User = require('../models/User');
 var auth = require('../utils/auth');
 var validator = require('../utils/validator');
+var superagent = require('superagent');
+var yelpAPIKEY = 'Bearer WdCKkVBICcEcVeO8C96lCEcTTkog2L9cP2VaRSyaaYUck0CdJNguo40wmyCV4pd7sE5knHHuLG6HKejNqRr41oCkxhMU565DV8kYUshzRkcMo8t8aclSwZaCcpE1WnYx';
+var Restaurant = require('../models/Restaurant');
+var PromotionController = require('../controllers/PromotionController');
 
 var EventController = {
+
+    validateOpenHour: function(data, res, event){
+        var restaurant = data.body;
+
+        var isValid = false;
+        var startTime = new Date(event.startTime);
+        var day = startTime.getDay();
+        var time = "" + startTime.getHours() + startTime.getMinutes();
+        console.log(day + "  " + time);
+
+        restaurant.hours.forEach(function(element) {
+            element.open.forEach(function(entry){
+                if(day == entry.day){
+                    console.log(entry.start + "  " + entry.end);
+                    isValid = (time > entry.start && time < entry.end);
+                }
+            })
+        });
+
+        if(isValid){
+            Event.create(event, function (err, _) {
+                if (err) return res.status(500).json(err.message);
+
+                return res.status(200).json(_._id);
+            })
+        } else {
+            return res.status(500).json("Event can't be created when the restaurant is closed.");
+        }
+    },
 
     createEvent: function (req, res) {
         var token = req.headers.authorization;
@@ -28,11 +61,8 @@ var EventController = {
                 delete event.lng;
                 delete event.lat;
 
-                Event.create(event, function (err, _) {
-                    if (err) return res.status(500).json(err.message);
-
-                    return res.status(200).json(_._id);
-                })
+                PromotionController.getRestaurantAndDoSomething(event.yelpID, 
+                    EventController.validateOpenHour, res, event);
             })
         })
     },
