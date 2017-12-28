@@ -13,6 +13,8 @@ chai.use(chaiHttp);
 describe('Event', () => {
 	describe('/POST /create/event', () => {
 	  
+	var id;
+
 	it('it should return error 401 because of bad token', (done) => {
 	 let event = {
 		  "yelpID": "02",
@@ -107,16 +109,15 @@ describe('Event', () => {
 			.set('Authorization', token)
 			.send(event)
             .end((err, res) => {
-                res.should.have.status(204);
+				id = res.body;
+                res.should.have.status(200);
               done();
             });
       });
-	});
 	  
-	describe('/GET /event', () => {
 	it('it should get an specific event', (done) => {
 		chai.request(server)
-		.get('/event/' + '5a282e911300bd0be859e65f')
+		.get('/event/' + id)
 		.end((err, res) => {
 			res.should.have.status(200);
 			res.body.should.be.a('object');
@@ -127,23 +128,10 @@ describe('Event', () => {
 			done();
 			});
 		});
-		
-	it('it should get an empty event', (done) => {
-		chai.request(server)
-		.get('/event/' + '5b282e911300bd0be859e65f')
-		.end((err, res) => {
-			res.should.have.status(200);
-			res.body.should.eql({'event':null})
-			done();
-			});
-		});
-	});
 	
-	
-	describe('/PUT /event', () => {
 	it('it should update an event and return 204', (done) => {
 		chai.request(server)
-		.put('/event/' + '5a282e911300bd0be859e65f')
+		.put('/event/' + id)
 		.set('Authorization', token)
 		.send({"title": "update",
 			  "description": "update",
@@ -155,17 +143,13 @@ describe('Event', () => {
 		  done();
 			});
 		});
-		
-	it('check the updated event', (done) => {
+
+	it('Clean up test event', (done) => {
 		chai.request(server)
-		.get('/event/' + '5a282e911300bd0be859e65f')
+		.delete('/event/' + id)
+		.set('Authorization', token)
 		.end((err, res) => {
-			res.should.have.status(200);
-			res.body.should.be.a('object');
-			res.body.event.should.have.property('yelpID').eql('01');
-			res.body.event.should.have.property('title').eql('update');
-			res.body.event.should.have.property('description').eql('update');
-			res.body.event.should.have.property('purpose').eql('update');
+			res.should.have.status(204);
 			done();
 			});
 		});

@@ -31,7 +31,7 @@ var EventController = {
                 Event.create(event, function (err, _) {
                     if (err) return res.status(500).json(err.message);
 
-                    res.status(204).send()
+                    return res.status(200).json(_._id);
                 })
             })
         })
@@ -124,7 +124,8 @@ var EventController = {
         var lat = req.swagger.params.lat.value;
         var radius = req.swagger.params.radius.value;
         var isValid = validator.validateCoordination(lat, lng);
-        
+        var regex = new RegExp(req.swagger.params.search.value, "i");
+
         if (isValid) {
             Event.find(
                 { 'hasFinished': false,
@@ -135,7 +136,10 @@ var EventController = {
                                 coordinates : [lng, lat] },
                             $maxDistance : radius
                         }
-                    }
+                    },
+                    $and:[
+                        { $or : [{title:regex}, {description:regex}]}
+                    ],
                 }, function (e, events){
                     if (e) return res.status(500).json(e.message);
 
@@ -147,7 +151,11 @@ var EventController = {
             // we should order by create time if user location is not provided.
             sortOption = '-createdAt';
 
-            Event.find({'hasFinished': false}, function (e, events) {
+            Event.find({'hasFinished': false,
+                        $and:[
+                            { $or : [{title:regex}, {description:regex}]}
+                        ],
+                }, function (e, events) {
                 if (e) return res.status(500).json(e.message);
     
                 res.json({events: events});

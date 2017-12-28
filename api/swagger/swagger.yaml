@@ -140,8 +140,10 @@ paths:
               lat: 
                 type: number
       responses:
-        "204":
+        "200":
           description: Success
+          schema:
+            $ref: "#/definitions/SuccessResponse"
         # responses may fall through to errors
         default:
           description: Error
@@ -166,17 +168,19 @@ paths:
         - name: lat
           type: number
           in: query
-          required: true
         - name: lng
           type: number
           in: query
-          required: true
         - name: radius
           type: number
           in: query
           default: 10000
           required: true
           description: we are using meter as base UNIT
+        - name: search  
+          type: string
+          in: query
+          description: match event title or description
       responses:
         "200":
           description: Success
@@ -478,6 +482,9 @@ definitions:
           type: boolean
         token:
           type: string
+     
+  SuccessResponse:
+      type: string
                 
   ErrorResponse:
       type: string
