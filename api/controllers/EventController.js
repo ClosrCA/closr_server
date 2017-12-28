@@ -112,8 +112,8 @@ var EventController = {
         Event.findById(id, function (e, event) {
             if (e) return res.status(500).json(e.message);
 
-            res.json({event: event});
-        })     
+            res.json({events: [event]});
+        })
     },
 
     getEvents: function(req, res) {
@@ -126,44 +126,34 @@ var EventController = {
         var isValid = validator.validateCoordination(lat, lng);
         var regex = new RegExp(req.swagger.params.search.value, "i");
 
-        if (isValid) {
-            Event.find(
-                { 'hasFinished': false,
-                    location : { $near :
-                        {
-                            $geometry : {
-                                type : "Point" ,
-                                coordinates : [lng, lat] },
-                            $maxDistance : radius
-                        }
-                    },
-                    $and:[
-                        { $or : [{title:regex}, {description:regex}]}
-                    ],
-                }, function (e, events){
-                    if (e) return res.status(500).json(e.message);
+        var where = {};
+        var sort = {};
 
-                    res.json({events: events});
-            })
-            .skip((page-1)*pageSize)
-            .limit(pageSize)
+        if (isValid) {
+            where.hasFinished = false;
+            where.location = {
+                $near: {
+                    $geometry: {
+                        type: "Point" ,
+                        coordinates: [lng, lat]
+                    },
+                    $maxDistance: radius
+                }
+            };
+            where.$or = [{title:regex}, {description:regex}];
         } else {
             // we should order by create time if user location is not provided.
-            sortOption = '-createdAt';
-
-            Event.find({'hasFinished': false,
-                        $and:[
-                            { $or : [{title:regex}, {description:regex}]}
-                        ],
-                }, function (e, events) {
-                if (e) return res.status(500).json(e.message);
-    
-                res.json({events: events});
-            })
-            .sort(sortOption)
-            .skip((page-1)*pageSize)
-            .limit(pageSize)
+            sort = {createdAt: -1};
         }
+
+        Event.find(where)
+        .sort(sort)
+        .skip((page-1)*pageSize)
+        .limit(pageSize).exec(function(err, events) {
+            if (err) return res.status(500).json(err.message);
+
+            res.json({events: events});
+        })
     }
 };
 
