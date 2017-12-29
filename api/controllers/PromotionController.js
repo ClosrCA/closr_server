@@ -100,7 +100,7 @@ var PromotionController = {
         .end((err, data) => {
             if (err) { return console.log(err); }
 
-            return res.json({restaurant : data.body});
+            return res.json({restaurant : [data.body]});
         });
     },
 };

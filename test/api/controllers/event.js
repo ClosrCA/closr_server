@@ -10,8 +10,10 @@ let token = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1OWYwMDM4ODk
 
 chai.use(chaiHttp);
 
+
 describe('Event', () => {
-	describe('/POST /create/event', () => {
+	
+	describe('/POST /events/', () => {
 	  
 	var id;
 
@@ -30,7 +32,7 @@ describe('Event', () => {
 		  "lat": 22
 	 };
 		chai.request(server)
-		.post('/create/event')
+		.post('/events/')
 		.set('Authorization', token + 'bad') // bad token
 		.send(event)
 		.end((err, res) => {
@@ -54,7 +56,7 @@ describe('Event', () => {
 		  "lat": 22
 	 };
 		chai.request(server)
-		.post('/create/event')
+		.post('/events/')
 		.set('Authorization', token)
 		.send(event)
 		.end((err, res) => {
@@ -80,7 +82,7 @@ describe('Event', () => {
 		  //"lat": 22
 	 };
 		chai.request(server)
-		.post('/create/event')
+		.post('/events/')
 		.set('Authorization', token)
 		.send(event)
 		.end((err, res) => {
@@ -105,7 +107,7 @@ describe('Event', () => {
 			  "lat": 22
          };
             chai.request(server)
-            .post('/create/event')
+            .post('/events/')
 			.set('Authorization', token)
 			.send(event)
             .end((err, res) => {
@@ -117,21 +119,21 @@ describe('Event', () => {
 	  
 	it('it should get an specific event', (done) => {
 		chai.request(server)
-		.get('/event/' + id)
+		.get('/events/' + id)
 		.end((err, res) => {
 			res.should.have.status(200);
 			res.body.should.be.a('object');
-			res.body.event.should.have.property('yelpID').eql('01');
-			res.body.event.should.have.property('title').eql('test');
-			res.body.event.should.have.property('description').eql('test');
-			res.body.event.should.have.property('purpose').eql('test');
+			res.body.events[0].should.have.property('yelpID').eql('01');
+			res.body.events[0].should.have.property('title').eql('test');
+			res.body.events[0].should.have.property('description').eql('test');
+			res.body.events[0].should.have.property('purpose').eql('test');
 			done();
 			});
 		});
 	
 	it('it should update an event and return 204', (done) => {
 		chai.request(server)
-		.put('/event/' + id)
+		.put('/events/' + id)
 		.set('Authorization', token)
 		.send({"title": "update",
 			  "description": "update",
@@ -146,10 +148,21 @@ describe('Event', () => {
 
 	it('Clean up test event', (done) => {
 		chai.request(server)
-		.delete('/event/' + id)
+		.delete('/events/' + id)
 		.set('Authorization', token)
 		.end((err, res) => {
 			res.should.have.status(204);
+			done();
+			});
+		});
+
+	it('Make sure test event is deleted', (done) => {
+		chai.request(server)
+		.get('/events/' + id)
+		.end((err, res) => {
+			res.should.have.status(200);
+			res.body.should.be.a('object');
+			res.body.events[0].should.have.property('isDeleted').eql(true);
 			done();
 			});
 		});

@@ -103,57 +103,7 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/ErrorResponse"
-  /create/event:
-     # binds a127 app logic to a route
-    x-swagger-router-controller: EventController
-    post:
-      description: Create event with authorized user
-      tags:
-        - event
-      operationId: createEvent
-      parameters:
-        - name: Authorization
-          in: header
-          type: string
-          required: true
-        - name: eventCreate
-          in: body
-          required: true
-          description: Event body
-          schema:
-            properties:
-              yelpID:
-                type: string
-              title:
-                type: string
-              description:
-                type: string
-              purpose:
-                type: string
-              startTime:
-                type: string
-              minAge:
-                type: number
-              maxAge:
-                type: number
-              capacity:
-                type: number
-              gender: 
-                type: string
-              lng:
-                type: number
-              lat: 
-                type: number
-      responses:
-        "200":
-          description: Success
-          schema:
-            $ref: "#/definitions/SuccessResponse"
-        # responses may fall through to errors
-        default:
-          description: Error
-          schema:
-            $ref: "#/definitions/ErrorResponse"
+            
   /events/:
     x-swagger-router-controller: EventController
     get:
@@ -202,7 +152,55 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/ErrorResponse"
-  /event/{id}:
+    post:
+      description: Create event with authorized user
+      tags:
+        - event
+      operationId: createEvent
+      parameters:
+        - name: Authorization
+          in: header
+          type: string
+          required: true
+        - name: eventCreate
+          in: body
+          required: true
+          description: Event body
+          schema:
+            properties:
+              yelpID:
+                type: string
+              title:
+                type: string
+              description:
+                type: string
+              purpose:
+                type: string
+              startTime:
+                type: string
+              minAge:
+                type: number
+              maxAge:
+                type: number
+              capacity:
+                type: number
+              gender: 
+                type: string
+              lng:
+                type: number
+              lat: 
+                type: number
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/SuccessResponse"
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /events/{id}:
     x-swagger-router-controller: EventController
     get:
       description: get a single event by mongo id
@@ -230,6 +228,8 @@ paths:
             $ref: "#/definitions/ErrorResponse"
     delete:
       description: delete a single event by mongo id
+      tags:
+        - event
       operationId: delete
       parameters:
         - name: Authorization
@@ -287,7 +287,8 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/ErrorResponse"
-  /restaurant:
+            
+  /restaurants/{id}:
     x-swagger-router-controller: PromotionController
     get:
       description: get restaurant detailed info by yelp id
@@ -297,13 +298,17 @@ paths:
       parameters:
         - name: id
           type: string
-          in: query
+          in: path
           required: true
       responses:
         "200":
           description: Success
           schema:
-            $ref: "#/definitions/Restaurant"
+            properties:
+              restaurants:
+                type: array
+                items:
+                  $ref: "#/definitions/Restaurant"
         # responses may fall through to errors
         default:
           description: Error
@@ -462,6 +467,8 @@ definitions:
       author:
           $ref: "#/definitions/Profile"
       hasFinished:
+        type: boolean
+      isDeleted:
         type: boolean
       lng: 
         type: number
