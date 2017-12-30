@@ -147,13 +147,14 @@ var EventController = {
         }
 
         Event.find(where)
-        .sort(sort)
-        .skip((page-1)*pageSize)
-        .limit(pageSize).exec(function(err, events) {
-            if (err) return res.status(500).json(err.message);
+            .populate('author')
+            .sort(sort)
+            .skip((page-1)*pageSize)
+            .limit(pageSize).exec(function(err, events) {
+                if (err) return res.status(500).json(err.message);
 
-            res.json({events: events});
-        })
+                res.json({events: events});
+            })
     }
 };
 

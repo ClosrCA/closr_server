@@ -154,7 +154,7 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/ErrorResponse"
-  /events/:
+  /events:
     x-swagger-router-controller: EventController
     get:
       description: get pagenated events within a radius or by created time if user location is not provided
