@@ -113,7 +113,7 @@ var EventController = {
             if (e) return res.status(500).json(e.message);
 
             res.json({events: [event]});
-        })
+        }).populate('author');
     },
 
     getEvents: function(req, res) {
