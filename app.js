@@ -18,6 +18,11 @@ SwaggerExpress.create(config, function(err, swaggerExpress) {
     swaggerExpress.register(app);
 
     var port = process.env.PORT || 10010;
+
+    app.get('/', function(req, res) {
+        res.send('Hello World from YourTable')
+    });
+
     app.listen(port);
 
     mongoose.connect(env.local.db, {useMongoClient: true});
