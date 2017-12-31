@@ -44,10 +44,6 @@ var PromotionController = {
         PromotionController.getRestaurantAndDoSomething(id, PromotionController.returnRestaurantDetail, res, null);
     },
 
-    returnRestaurantDetail: function(data, res){
-        return res.json({restaurant : data.body});
-    },
-
     getRestaurantAndDoSomething: function(id, callback, res, params) {
         superagent
         .get('https://api.yelp.com/v3/businesses/'+ id)
@@ -58,6 +54,10 @@ var PromotionController = {
 
             callback(data, res, params);
         });
+    },
+
+    returnRestaurantDetail: function(data, res){
+        return res.json({restaurant : data.body});
     },
 };
 

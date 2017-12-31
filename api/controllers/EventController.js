@@ -2,8 +2,6 @@ var Event = require('../models/Event');
 var User = require('../models/User');
 var auth = require('../utils/auth');
 var validator = require('../utils/validator');
-var superagent = require('superagent');
-var yelpAPIKEY = 'Bearer WdCKkVBICcEcVeO8C96lCEcTTkog2L9cP2VaRSyaaYUck0CdJNguo40wmyCV4pd7sE5knHHuLG6HKejNqRr41oCkxhMU565DV8kYUshzRkcMo8t8aclSwZaCcpE1WnYx';
 var Restaurant = require('../models/Restaurant');
 var PromotionController = require('../controllers/PromotionController');
 
@@ -16,12 +14,10 @@ var EventController = {
         var startTime = new Date(event.startTime);
         var day = startTime.getDay();
         var time = "" + startTime.getHours() + startTime.getMinutes();
-        console.log(day + "  " + time);
 
         restaurant.hours.forEach(function(element) {
             element.open.forEach(function(entry){
                 if(day == entry.day){
-                    console.log(entry.start + "  " + entry.end);
                     isValid = (time > entry.start && time < entry.end);
                 }
             })
