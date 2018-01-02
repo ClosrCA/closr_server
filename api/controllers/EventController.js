@@ -2,6 +2,7 @@ var Event = require('../models/Event');
 var User = require('../models/User');
 var auth = require('../utils/auth');
 var validator = require('../utils/validator');
+var PromotionController = require('../controllers/PromotionController');
 
 var EventController = {
 
@@ -28,11 +29,21 @@ var EventController = {
                 delete event.lng;
                 delete event.lat;
 
-                Event.create(event, function (err, _) {
+                PromotionController.getRestaurantFromYelp(event.yelpID, function(err, data) {
                     if (err) return res.status(500).json(err.message);
 
-                    return res.status(200).json(_._id);
-                })
+                    var isValid = validator.validateOpenHour(event, data.body)
+
+                    if(isValid){
+                        Event.create(event, function (e, newEvent) {
+                            if (e) return res.status(500).json(e.message);
+
+                            return res.status(200).json(newEvent._id);
+                        })
+                    } else {
+                        return res.status(500).json("Event can't be created when the restaurant is closed.");
+                    }
+                });
             })
         })
     },

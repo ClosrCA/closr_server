@@ -14,5 +14,17 @@ module.exports = {
 
     validateCoordination: function(lat, lng) {
         return (lat >= -90 && lat <= 90) && (lng >= -180 && lng <= 180);
+    },
+
+    validateOpenHour: function(event, restaurant) {
+        var startTime = new Date(event.startTime);
+        var day = startTime.getDay();
+        var time = "" + startTime.getHours() + startTime.getMinutes();
+
+        return restaurant.hours.some(function(element) {
+            return element.open.some(function(entry) {
+                return day === entry.day && (time > entry.start && time < entry.end)
+            })
+        })
     }
 };
