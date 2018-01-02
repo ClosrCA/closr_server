@@ -41,7 +41,11 @@ var PromotionController = {
 
     getRestaurantById: function(req, res) {
         var id = req.swagger.params.id.value;
-        PromotionController.getRestaurantFromYelp(id, PromotionController.returnRestaurantDetail, res);
+        PromotionController.getRestaurantFromYelp(id, function(err, data) {
+            if (err) return res.status(500).json(err.message);
+
+            return res.json({restaurant: data.body})
+        });
     },
 
     getRestaurantFromYelp: function(id, callback) {
@@ -49,16 +53,8 @@ var PromotionController = {
         .get('https://api.yelp.com/v3/businesses/'+ id)
         .set('Authorization', yelpAPIKEY)
         .set('Accept', 'application/json')
-        .end((err, data) => {
-            if (err) { return console.log(err); }
-
-            callback(data, arguments[2], arguments[3]);
-        });
-    },
-
-    returnRestaurantDetail: function(data, res){
-        return res.json({restaurant : data.body});
-    },
+        .end(callback);
+    }
 };
 
 module.exports = PromotionController;

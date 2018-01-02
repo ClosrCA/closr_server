@@ -17,19 +17,14 @@ module.exports = {
     },
 
     validateOpenHour: function(event, restaurant) {
-        var isValid = false;
         var startTime = new Date(event.startTime);
         var day = startTime.getDay();
         var time = "" + startTime.getHours() + startTime.getMinutes();
 
-        restaurant.hours.forEach(function(element) {
-            element.open.forEach(function(entry){
-                if(day == entry.day){
-                    isValid = (time > entry.start && time < entry.end);
-                }
+        return restaurant.hours.some(function(element) {
+            return element.open.some(function(entry) {
+                return day === entry.day && (time > entry.start && time < entry.end)
             })
-        });
-
-        return isValid;
+        })
     }
 };

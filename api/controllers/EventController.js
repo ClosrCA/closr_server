@@ -6,20 +6,6 @@ var PromotionController = require('../controllers/PromotionController');
 
 var EventController = {
 
-    validateOpenHourAndCreate: function(data, res, event){
-        var isValid = validator.validateOpenHour(event, data.body);
-
-        if(isValid){
-            Event.create(event, function (err, _) {
-                if (err) return res.status(500).json(err.message);
-
-                return res.status(200).json(_._id);
-            })
-        } else {
-            return res.status(500).json("Event can't be created when the restaurant is closed.");
-        }
-    },
-
     createEvent: function (req, res) {
         var token = req.headers.authorization;
         var event = req.body;
@@ -43,8 +29,21 @@ var EventController = {
                 delete event.lng;
                 delete event.lat;
 
-                PromotionController.getRestaurantFromYelp(event.yelpID, 
-                    EventController.validateOpenHourAndCreate, res, event);
+                PromotionController.getRestaurantFromYelp(event.yelpID, function(err, data) {
+                    if (err) return res.status(500).json(err.message);
+
+                    var isValid = validator.validateOpenHour(event, data.body)
+
+                    if(isValid){
+                        Event.create(event, function (e, newEvent) {
+                            if (e) return res.status(500).json(e.message);
+
+                            return res.status(200).json(newEvent._id);
+                        })
+                    } else {
+                        return res.status(500).json("Event can't be created when the restaurant is closed.");
+                    }
+                });
             })
         })
     },
