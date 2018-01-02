@@ -11,17 +11,17 @@ let token = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1OWYwMDM4ODk
 chai.use(chaiHttp);
 
 describe('Events Search', () => {
-	
-	describe('/GET /events', () => {
+
+	describe('/GET /events/', () => {
 
 	var id;
 
 	it('it should create an event', (done) => {
 		let event = {
 				"yelpID": "01",
-				"title": "test",
-				"description": "test",
-				"purpose": "test",
+				"title": "TORONTO",
+				"description": "update",
+				"purpose": "test1",
 				"startTime": "22",
 				"minAge": 11,
 				"maxAge": 22,
@@ -31,7 +31,7 @@ describe('Events Search', () => {
 				"lat": 22
 		};
 			chai.request(server)
-			.post('/create/event')
+			.post('/events/')
 			.set('Authorization', token)
 			.send(event)
 			.end((err, res) => {
@@ -40,72 +40,17 @@ describe('Events Search', () => {
 				done();
 			});
 		});
-
-	it('update one event title to TORONTO', (done) => {
-		chai.request(server)
-		.put('/event/' + id)
-		.set('Authorization', token)
-		.send({"title": "TORONTO",
-			  "description": "update",
-			  "purpose": "test1",
-			  "minAge": 11,
-			  "maxAge": 22})
-		.end((err, res) => {
-			res.should.have.status(204);
-		  done();
-			});
-		});
 		
-	it('Try to find event with search -- toronto', (done) => {
+	it('Try to find event with search -- toron', (done) => {
 		chai.request(server)
-		.get('/events/' + '?page=1&pageSize=10&radius=10000&search=toronto')
+		.get('/events/' + '?page=1&pageSize=10&radius=10000&search=toron')
 		.end((err, res) => {
 			res.should.have.status(200);
 			res.body.should.be.a('object');
-			res.body.events[0].should.have.property('yelpID').eql('22');
+			res.body.events[0].should.have.property('yelpID').eql('01');
 			res.body.events[0].should.have.property('title').eql('TORONTO');
 			res.body.events[0].should.have.property('description').eql('update');
 			res.body.events[0].should.have.property('purpose').eql('test1');
-			done();
-			});
-		});
-	
-	it('update one event description to MonTreal', (done) => {
-		chai.request(server)
-		.put('/event/' + id)
-		.set('Authorization', token)
-		.send({"title": "TORONTO",
-			  "description": "MonTreal",
-			  "purpose": "test2",
-			  "minAge": 11,
-			  "maxAge": 22})
-		.end((err, res) => {
-			res.should.have.status(204);
-		  done();
-			});
-		});
-		
-	it('Try to find event with search -- MonT', (done) => {
-		chai.request(server)
-		.get('/events/' + '?page=1&pageSize=10&radius=10000&search=MonT')
-		.end((err, res) => {
-			res.should.have.status(200);
-			res.body.events.should.be.a('array');
-			res.body.events[0].should.have.property('yelpID').eql('22');
-			res.body.events[0].should.have.property('title').eql('TORONTO');
-			res.body.events[0].should.have.property('description').eql('MonTreal');
-			res.body.events[0].should.have.property('purpose').eql('test2');
-			done();
-			});
-		});
-		
-	it('Try to find non-exist events by searching -- ottawa', (done) => {
-		chai.request(server)
-		.get('/events/' + '?page=1&pageSize=10&radius=10000&search=ottawa')
-		.end((err, res) => {
-			res.should.have.status(200);
-			res.body.events.should.be.a('array');
-			res.body.events.length.should.be.eql(0);
 			done();
 			});
 		});
@@ -116,14 +61,14 @@ describe('Events Search', () => {
 		.end((err, res) => {
 			res.should.have.status(200);
 			res.body.events.should.be.a('array');
-			res.body.events.length.should.be.eql(10);
+			res.body.events.length.should.be.eql(1);
 			done();
 			});
 		});
 	
 	it('Clean up test event', (done) => {
 		chai.request(server)
-		.delete('/event/' + id)
+		.delete('/events/' + id)
 		.set('Authorization', token)
 		.end((err, res) => {
 			res.should.have.status(204);
@@ -146,7 +91,7 @@ describe('Events Search', () => {
 				"lat": 50
 		};
 			chai.request(server)
-			.post('/create/event')
+			.post('/events/')
 			.set('Authorization', token)
 			.send(event)
 			.end((err, res) => {
@@ -180,7 +125,7 @@ describe('Events Search', () => {
 		
 	it('Clean up test event', (done) => {
 		chai.request(server)
-		.delete('/event/' + id)
+		.delete('/events/' + id)
 		.set('Authorization', token)
 		.end((err, res) => {
 			res.should.have.status(204);

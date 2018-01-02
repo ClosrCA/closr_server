@@ -103,9 +103,55 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/ErrorResponse"
-  /create/event:
-     # binds a127 app logic to a route
+            
+  /events/:
     x-swagger-router-controller: EventController
+    get:
+      description: get pagenated events within a radius or by created time if user location is not provided
+      tags:
+        - event
+      operationId: getEvents
+      parameters:
+        - name: page
+          type: number
+          in: query
+          required: true
+          default: 1
+        - name: pageSize
+          type: number
+          in: query
+          required: true
+          default: 10
+        - name: lat
+          type: number
+          in: query
+        - name: lng
+          type: number
+          in: query
+        - name: radius
+          type: number
+          in: query
+          default: 10000
+          required: true
+          description: we are using meter as base UNIT
+        - name: search  
+          type: string
+          in: query
+          description: match event title or description
+      responses:
+        "200":
+          description: Success
+          schema:
+            properties:
+              events:
+                type: array
+                items:
+                  $ref: "#/definitions/Event"
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
     post:
       description: Create event with authorized user
       tags:
@@ -154,55 +200,7 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/ErrorResponse"
-  /events:
-    x-swagger-router-controller: EventController
-    get:
-      description: get pagenated events within a radius or by created time if user location is not provided
-      tags:
-        - event
-      operationId: getEvents
-      parameters:
-        - name: page
-          type: number
-          in: query
-          required: true
-          default: 1
-        - name: pageSize
-          type: number
-          in: query
-          required: true
-          default: 10
-        - name: lat
-          type: number
-          in: query
-        - name: lng
-          type: number
-          in: query
-        - name: radius
-          type: number
-          in: query
-          default: 10000
-          required: true
-          description: we are using meter as base UNIT
-        - name: search  
-          type: string
-          in: query
-          description: match event title or description
-      responses:
-        "200":
-          description: Success
-          schema:
-            properties:
-              events:
-                type: array
-                items:
-                  $ref: "#/definitions/Event"
-        # responses may fall through to errors
-        default:
-          description: Error
-          schema:
-            $ref: "#/definitions/ErrorResponse"
-  /event/{id}:
+  /events/{id}:
     x-swagger-router-controller: EventController
     get:
       description: get a single event by mongo id
@@ -230,6 +228,8 @@ paths:
             $ref: "#/definitions/ErrorResponse"
     delete:
       description: delete a single event by mongo id
+      tags:
+        - event
       operationId: delete
       parameters:
         - name: Authorization
@@ -287,7 +287,8 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/ErrorResponse"
-  /restaurant:
+            
+  /restaurants/{id}:
     x-swagger-router-controller: PromotionController
     get:
       description: get restaurant detailed info by yelp id
@@ -297,13 +298,17 @@ paths:
       parameters:
         - name: id
           type: string
-          in: query
+          in: path
           required: true
       responses:
         "200":
           description: Success
           schema:
-            $ref: "#/definitions/Restaurant"
+            properties:
+              restaurants:
+                type: array
+                items:
+                  $ref: "#/definitions/Restaurant"
         # responses may fall through to errors
         default:
           description: Error
@@ -462,6 +467,8 @@ definitions:
       author:
           $ref: "#/definitions/Profile"
       hasFinished:
+        type: boolean
+      isDeleted:
         type: boolean
       lng: 
         type: number

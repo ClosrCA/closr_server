@@ -82,7 +82,7 @@ var EventController = {
 
             User.findById(userID, function(err, user){
                 if(user.isAdmin){
-                    Event.findByIdAndRemove(eventId, function (e) {
+                    Event.findByIdAndUpdate(eventId, {isDeleted : true}, function (e) {
                         if (e) return res.status(500).json(e.message);
             
                         res.status(204).send()
@@ -92,7 +92,7 @@ var EventController = {
                         if (err) return res.status(500).json(err.message);
         
                         if(userID == event.author){
-                            Event.findByIdAndRemove(eventId, function (e) {
+                            Event.findByIdAndUpdate(eventId, {isDeleted : true}, function (e) {
                                 if (e) return res.status(500).json(e.message);
                     
                                 res.status(204).send()
@@ -128,6 +128,7 @@ var EventController = {
 
         var where = {};
         var sort = {};
+        where.isDeleted = false;
 
         if (isValid) {
             where.hasFinished = false;
