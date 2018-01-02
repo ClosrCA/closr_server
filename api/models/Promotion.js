@@ -11,7 +11,7 @@ var promotionSchema = new Schema({
     province: String,
     city: String,
     street: String,
-    promotionType: String,  // featured, discount, deal
+    promotionType: { type: String, enum: ['featured', 'discount', 'deal'] },
     startDate: Date,
     endDate: Date,
     startHour: String,
@@ -20,8 +20,7 @@ var promotionSchema = new Schema({
     amount: Number,
     item: String,
     images: [String],
-    lng: Number,
-    lat: Number,
+    location: { lng: Number, lat: Number },
     createdAt: { type: Date, default: Date.now() },
     updatedAt: { type: Date, default: Date.now() }
 }, {
