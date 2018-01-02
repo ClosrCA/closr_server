@@ -41,10 +41,10 @@ var PromotionController = {
 
     getRestaurantById: function(req, res) {
         var id = req.swagger.params.id.value;
-        PromotionController.getRestaurantAndDoSomething(id, PromotionController.returnRestaurantDetail, res, null);
+        PromotionController.getRestaurantFromYelp(id, PromotionController.returnRestaurantDetail, res);
     },
 
-    getRestaurantAndDoSomething: function(id, callback, res, params) {
+    getRestaurantFromYelp: function(id, callback) {
         superagent
         .get('https://api.yelp.com/v3/businesses/'+ id)
         .set('Authorization', yelpAPIKEY)
@@ -52,7 +52,7 @@ var PromotionController = {
         .end((err, data) => {
             if (err) { return console.log(err); }
 
-            callback(data, res, params);
+            callback(data, arguments[2], arguments[3]);
         });
     },
 

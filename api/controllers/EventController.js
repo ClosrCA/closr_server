@@ -2,26 +2,12 @@ var Event = require('../models/Event');
 var User = require('../models/User');
 var auth = require('../utils/auth');
 var validator = require('../utils/validator');
-var Restaurant = require('../models/Restaurant');
 var PromotionController = require('../controllers/PromotionController');
 
 var EventController = {
 
-    validateOpenHour: function(data, res, event){
-        var restaurant = data.body;
-
-        var isValid = false;
-        var startTime = new Date(event.startTime);
-        var day = startTime.getDay();
-        var time = "" + startTime.getHours() + startTime.getMinutes();
-
-        restaurant.hours.forEach(function(element) {
-            element.open.forEach(function(entry){
-                if(day == entry.day){
-                    isValid = (time > entry.start && time < entry.end);
-                }
-            })
-        });
+    validateOpenHourAndCreate: function(data, res, event){
+        var isValid = validator.validateOpenHour(event, data.body);
 
         if(isValid){
             Event.create(event, function (err, _) {
@@ -57,8 +43,8 @@ var EventController = {
                 delete event.lng;
                 delete event.lat;
 
-                PromotionController.getRestaurantAndDoSomething(event.yelpID, 
-                    EventController.validateOpenHour, res, event);
+                PromotionController.getRestaurantFromYelp(event.yelpID, 
+                    EventController.validateOpenHourAndCreate, res, event);
             })
         })
     },
