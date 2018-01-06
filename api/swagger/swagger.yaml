@@ -187,8 +187,10 @@ paths:
               gender: 
                 type: string
               lng:
+                description: user current location, will be updated to restaurant location later
                 type: number
               lat: 
+                description: user current location, will be updated to restaurant location later
                 type: number
       responses:
         "200":
@@ -278,6 +280,12 @@ paths:
             minAge:
               type: number
             maxAge:
+              type: number
+            lat:
+              description: user current location
+              type: number
+            lng:
+              description: user current location
               type: number
       responses:
         "204":

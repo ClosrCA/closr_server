@@ -32,20 +32,51 @@ var EventController = {
                 PromotionController.getRestaurantFromYelp(event.yelpID, function(err, data) {
                     if (err) return res.status(500).json(err.message);
 
-                    var isValid = validator.validateOpenHour(event, data.body)
+                    var isRestaurantOpen = validator.validateOpenHour(event, data.body);
+                    var isDistanceValid = validator.validateDistance(event.location, data.body.coordinates, 
+                        Date.now(), Date.parse(event.startTime), true);
 
-                    if(isValid){
-                        Event.create(event, function (e, newEvent) {
-                            if (e) return res.status(500).json(e.message);
+                    if(isRestaurantOpen && isDistanceValid) {
+                        EventController.getUpcomingEvents(user._id, function(err, upcomingEvents) {
+                            if (err) return res.status(500).json(err.message);
 
-                            return res.status(200).json(newEvent._id);
-                        })
+                            if(upcomingEvents.length == 0 || validator.validateDistance(upcomingEvents[0].location, data.body.coordinates, 
+                                Date.parse(upcomingEvents[0].startTime), Date.parse(event.startTime), false)) {
+                                
+                                // here we update event location to restaurant location
+                                event.location = {
+                                    lng: data.body.coordinates.longitude,
+                                    lat: data.body.coordinates.latitude
+                                };
+
+                                Event.create(event, function (e, newEvent) {
+                                    if (e) return res.status(500).json(e.message);
+                                    
+                                    return res.status(200).json(newEvent._id);
+                                });
+                            } else {
+                                return res.status(400).json("Sorry, you have an upcoming event during that time.");
+                            }
+                        });
+                    } else if (!isTimeValid) {
+                        return res.status(400).json("Event can't be created when the restaurant is closed.");
                     } else {
-                        return res.status(500).json("Event can't be created when the restaurant is closed.");
+                        return res.status(400).json("Are you sure you can make it?");
                     }
                 });
             })
         })
+    },
+
+    getUpcomingEvents: function(userID, callback) {
+        var where = {};
+        where.isDeleted = false;
+        where.$or = [{author:userID}, {attendees:userID}];
+        where.startTime = {$gt : Date.now()};
+
+        Event.find(where)
+        .sort({startTime: 'asc'})
+        .exec(callback);
     },
 
     update: function (req, res) {
@@ -74,11 +105,40 @@ var EventController = {
                         res.status(204).send()
                     })
                 } else {
-                    Event.findOneAndUpdate(eventId, {$push : {attendees : userID}, $set:{"updatedAt": Date.now()}}, function (err, _) {
-                        if (err) return res.status(500).json(err.message);
-    
-                        res.status(204).send()
-                    })
+                    if(validator.validateCoordination(req.body.lat, req.body.lng)) {
+                        // I am copying an new event to pass in user location and event start time.
+                        var outset = {};
+                        outset.lat = req.body.lat;
+                        outset.lng = req.body.lng;
+
+                        var destination = {};
+                        destination.latitude = event.location.lat;
+                        destination.longitude = event.location.lng;
+
+                        var isDistanceValid = validator.validateDistance(outset, destination,
+                                                        Date.now(), Date.parse(event.startTime), true);
+
+                        if(isDistanceValid) {
+                            EventController.getUpcomingEvents(userID, function(err, upcomingEvents) {
+                                if (err) return res.status(500).json(err.message);
+
+                                if(upcomingEvents.length == 0 || validator.validateDistance(upcomingEvents[0].location, destination,
+                                    Date.parse(upcomingEvents[0].startTime), Date.parse(event.startTime), false)) {
+                                    Event.findOneAndUpdate(eventId, {$push : {attendees : userID}, $set:{"updatedAt": Date.now()}}, function (err, _) {
+                                        if (err) return res.status(500).json(err.message);
+                    
+                                        res.status(204).send()
+                                    })
+                                } else {
+                                    return res.status(400).json("Sorry, you have an upcoming event during that time.");
+                                }
+                            });
+                        } else {
+                            return res.status(400).json("Are you sure you can make it?");
+                        }
+                    } else {
+                        return res.status(400).json("Invalid coordinates.");
+                    }
                 }
             })
         })
