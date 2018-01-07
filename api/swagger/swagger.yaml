@@ -119,10 +119,6 @@ paths:
           in: formData
           type: file
           required: true
-        - name: fileName
-          in: query
-          type: string
-          required: true
       responses:
         "204":
           description: Success

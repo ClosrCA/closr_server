@@ -111,12 +111,11 @@ var UserController = {
     uploadAvatar: function (req, res) {
         var token = req.headers.authorization;
         var file = req.files.upload[0];
-        var fileName = req.swagger.params.fileName.value;
 
         auth.verifyToken(token, function (err, userID) {
             if (err) return res.status(401).json(err.message);
 
-            fileUpload.uploadImageToAWS(file, fileName, function(err, data){
+            fileUpload.uploadImageToAWS(file, file.originalname, function(err, data){
                 if (err) return res.status(500).json(err);
                 
                 User.findByIdAndUpdate(userID, {avatar : data.Location}, function (e, user) {
