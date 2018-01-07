@@ -115,7 +115,7 @@ var UserController = {
         auth.verifyToken(token, function (err, userID) {
             if (err) return res.status(401).json(err.message);
 
-            fileUpload.uploadImageToAWS(file, file.originalname, function(err, data){
+            fileUpload.uploadFileToAWS(file, file.originalname, function(err, data){
                 if (err) return res.status(500).json(err);
                 
                 User.findByIdAndUpdate(userID, {avatar : data.Location}, function (e, user) {

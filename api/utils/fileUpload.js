@@ -1,7 +1,7 @@
 var AWS = require('aws-sdk');
 
 module.exports = {
-    uploadImageToAWS: function(file, fileName, callback) {
+    uploadFileToAWS: function(file, fileName, callback) {
         AWS.config.update({
             accessKeyId:"AKIAIGMZYILI3RZMV5IA",
             secretAccessKey:"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"
