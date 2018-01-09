@@ -1,6 +1,7 @@
 var User = require('../models/User');
 var fb = require('../utils/facebook');
 var auth = require('../utils/auth');
+var fileUpload = require('../utils/fileUpload');
 var _ = require('lodash');
 
 var UserController = {
@@ -104,6 +105,25 @@ var UserController = {
 
                 return res.status(204).send();
             })
+        })
+    },
+
+    uploadAvatar: function (req, res) {
+        var token = req.headers.authorization;
+        var file = req.files.upload[0];
+
+        auth.verifyToken(token, function (err, userID) {
+            if (err) return res.status(401).json(err.message);
+
+            fileUpload.uploadFileToAWS(file, file.originalname, function(err, data){
+                if (err) return res.status(500).json(err);
+                
+                User.findByIdAndUpdate(userID, {avatar : data.Location}, function (e, user) {
+                    if (e) return res.status(500).json(e.message);
+    
+                    return res.status(204).send();
+                })
+            });
         })
     }
 };
