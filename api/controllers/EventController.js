@@ -32,17 +32,24 @@ var EventController = {
                 PromotionController.getRestaurantFromYelp(event.yelpID, function(err, data) {
                     if (err) return res.status(500).json(err.message);
 
-                    var isRestaurantOpen = validator.validateOpenHour(event, data.body);
-                    var isDistanceValid = validator.validateDistance(event.location, data.body.coordinates, 
+                    if(!validator.validateOpenHour(event, data.body)) {
+                        return res.status(400).json("Restaurant not open.");
+                    }
+
+                    var isReachableFromCurrentLocation = validator.validateDistance(event.location, data.body.coordinates, 
                         Date.now(), Date.parse(event.startTime), true);
 
-                    if(isRestaurantOpen && isDistanceValid) {
+                    if(isReachableFromCurrentLocation) {
                         EventController.getUpcomingEvents(user._id, function(err, upcomingEvents) {
                             if (err) return res.status(500).json(err.message);
 
-                            if(upcomingEvents.length == 0 || validator.validateDistance(upcomingEvents[0].location, data.body.coordinates, 
-                                Date.parse(upcomingEvents[0].startTime), Date.parse(event.startTime), false)) {
-                                
+                            var isReachableFromUpcomingEvent = false;
+                            if(upcomingEvents.length > 0){
+                                isReachableFromUpcomingEvent = validator.validateDistance(upcomingEvents[0].location, data.body.coordinates, 
+                                    Date.parse(upcomingEvents[0].startTime), Date.parse(event.startTime), false);
+                            }
+
+                            if(upcomingEvents.length == 0 || isReachableFromUpcomingEvent) {
                                 // here we update event location to restaurant location
                                 event.location = {
                                     lng: data.body.coordinates.longitude,
@@ -58,8 +65,6 @@ var EventController = {
                                 return res.status(400).json("Sorry, you have an upcoming event during that time.");
                             }
                         });
-                    } else if (!isTimeValid) {
-                        return res.status(400).json("Event can't be created when the restaurant is closed.");
                     } else {
                         return res.status(400).json("Are you sure you can make it?");
                     }
@@ -115,15 +120,20 @@ var EventController = {
                         destination.latitude = event.location.lat;
                         destination.longitude = event.location.lng;
 
-                        var isDistanceValid = validator.validateDistance(outset, destination,
+                        var isReachableFromCurrentLocation = validator.validateDistance(outset, destination,
                                                         Date.now(), Date.parse(event.startTime), true);
 
-                        if(isDistanceValid) {
+                        if(isReachableFromCurrentLocation) {
                             EventController.getUpcomingEvents(userID, function(err, upcomingEvents) {
                                 if (err) return res.status(500).json(err.message);
 
-                                if(upcomingEvents.length == 0 || validator.validateDistance(upcomingEvents[0].location, destination,
-                                    Date.parse(upcomingEvents[0].startTime), Date.parse(event.startTime), false)) {
+                                var isReachableFromUpcomingEvent = false;
+                                if(upcomingEvents.length > 0){
+                                    isReachableFromUpcomingEvent = validator.validateDistance(upcomingEvents[0].location, destination,
+                                        Date.parse(upcomingEvents[0].startTime), Date.parse(event.startTime), false);
+                                }
+
+                                if(upcomingEvents.length == 0 || isReachableFromUpcomingEvent) {
                                     Event.findOneAndUpdate(eventId, {$push : {attendees : userID}, $set:{"updatedAt": Date.now()}}, function (err, _) {
                                         if (err) return res.status(500).json(err.message);
                     
