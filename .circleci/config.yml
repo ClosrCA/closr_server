@@ -38,7 +38,4 @@ jobs:
 
       - deploy:
           branch: develop
-          command:
-            - aws configure set region ca-central-1 --profile eb-cli
-            - aws configure set output text --profile eb-cli
-            - eb deploy yourtable_server --profile default --nohang
+          command: eb deploy yourtable_server
