@@ -34,3 +34,9 @@ jobs:
       # run tests!
       - run: yarn test
 
+  deploy:
+    branch: develop
+    commands:
+      - aws configure set region ca-central-1 --profile eb-cli
+      - aws configure set output text --profile eb-cli
+      - eb deploy yourtable_server --profile default --nohang
