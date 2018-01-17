@@ -34,6 +34,8 @@ jobs:
       # run tests!
       - run: yarn test
 
+      - run: mkdir ~/.aws && printf "[profile eb-cli]\naws_access_key_id = ${AWS_ACCESS_KEY_ID}\naws_secret_access_key = ${AWS_SECRET_ACCESS_KEY}" > ~/.aws/config
+
       - deploy:
           - aws configure set region ca-central-1 --profile eb-cli
           - aws configure set output text --profile eb-cli
