@@ -94,17 +94,17 @@ describe('Event', () => {
 	
 	it('it should create an event', (done) => {
          let event = {
-			  "yelpID": "01",
+			  "yelpID": "congee-queen-mississauga",
 			  "title": "test",
 			  "description": "test",
 			  "purpose": "test",
-			  "startTime": "22",
+			  "startTime": "2019-01-15T16:56:50.036Z",
 			  "minAge": 11,
 			  "maxAge": 22,
 			  "capacity": 22,
 			  "gender": "m",
-			  "lng": 22,
-			  "lat": 22
+			  "lng": -79,
+			  "lat": 43
          };
             chai.request(server)
             .post('/events/')
@@ -123,7 +123,7 @@ describe('Event', () => {
 		.end((err, res) => {
 			res.should.have.status(200);
 			res.body.should.be.a('object');
-			res.body.events[0].should.have.property('yelpID').eql('01');
+			res.body.events[0].should.have.property('yelpID').eql('congee-queen-mississauga');
 			res.body.events[0].should.have.property('title').eql('test');
 			res.body.events[0].should.have.property('description').eql('test');
 			res.body.events[0].should.have.property('purpose').eql('test');

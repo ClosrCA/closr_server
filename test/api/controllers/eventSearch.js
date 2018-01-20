@@ -18,17 +18,17 @@ describe('Events Search', () => {
 
 	it('it should create an event', (done) => {
 		let event = {
-				"yelpID": "01",
-				"title": "TORONTO",
-				"description": "update",
-				"purpose": "test1",
-				"startTime": "22",
-				"minAge": 11,
-				"maxAge": 22,
-				"capacity": 22,
-				"gender": "m",
-				"lng": 22,
-				"lat": 22
+			"yelpID": "congee-queen-mississauga",
+			"title": "toronto",
+			"description": "update",
+			"purpose": "test1",
+			"startTime": "2019-01-15T16:56:50.036Z",
+			"minAge": 11,
+			"maxAge": 22,
+			"capacity": 22,
+			"gender": "m",
+			"lng": -79,
+			"lat": 43
 		};
 			chai.request(server)
 			.post('/events/')
@@ -47,8 +47,8 @@ describe('Events Search', () => {
 		.end((err, res) => {
 			res.should.have.status(200);
 			res.body.should.be.a('object');
-			res.body.events[0].should.have.property('yelpID').eql('01');
-			res.body.events[0].should.have.property('title').eql('TORONTO');
+			res.body.events[0].should.have.property('yelpID').eql('congee-queen-mississauga');
+			res.body.events[0].should.have.property('title').eql('toronto');
 			res.body.events[0].should.have.property('description').eql('update');
 			res.body.events[0].should.have.property('purpose').eql('test1');
 			done();
@@ -75,64 +75,6 @@ describe('Events Search', () => {
 			done();
 			});
 		});
-		
-	it('it should create an event', (done) => {
-		let event = {
-				"yelpID": "01",
-				"title": "starbucks",
-				"description": "starbucks",
-				"purpose": "coffee",
-				"startTime": "22",
-				"minAge": 11,
-				"maxAge": 22,
-				"capacity": 22,
-				"gender": "m",
-				"lng": 50,
-				"lat": 50
-		};
-			chai.request(server)
-			.post('/events/')
-			.set('Authorization', token)
-			.send(event)
-			.end((err, res) => {
-				id = res.body;
-				res.should.have.status(200);
-				done();
-			});
-		});
-	
-	it('Try to find a starbucks event close to lat:50 lng:50', (done) => {
-		chai.request(server)
-		.get('/events/' + '?page=1&pageSize=10&lat=50&lng=50&radius=10000')
-		.end((err, res) => {
-			res.should.have.status(200);
-			res.body.events.should.be.a('array');
-			res.body.events.length.should.be.eql(1);
-			done();
-			});
-		});
-		
-	it('Try to find an event close to lat:50 lng:50 by searching -- mcdonalds', (done) => {
-		chai.request(server)
-		.get('/events/' + '?page=1&pageSize=10&lat=50&lng=50&radius=10000&search=mcdonalds')
-		.end((err, res) => {
-			res.should.have.status(200);
-			res.body.events.should.be.a('array');
-			res.body.events.length.should.be.eql(0);
-			done();
-			});
-		});
-		
-	it('Clean up test event', (done) => {
-		chai.request(server)
-		.delete('/events/' + id)
-		.set('Authorization', token)
-		.end((err, res) => {
-			res.should.have.status(204);
-			done();
-			});
-		});
-
 	});
 });
 
