@@ -6,7 +6,7 @@ let chaiHttp = require('chai-http');
 let server = require('../../../app');
 let should = chai.should();
 
-let token = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1OWYwMDM4ODkwN2IzNzA0YjRjNDYxZmQiLCJpc3MiOiJZb3VyVGFibGUiLCJpYXQiOjE1MDg5MDE3OTl9.ot_1psqlXEdsaG64zgigJz3DWJYKS-n-QEd-9INz1Mg';
+let token = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1YWI2Y2Y3MmFhNzk0YzI5ZjgxNGMzNTEiLCJpc3MiOiJZb3VyVGFibGUiLCJpYXQiOjE1MjE5MzAwOTh9.5Z2fm_29hjgwogwvhy1CnUDNR1nXGWHUwEV08nHeccA';
 
 chai.use(chaiHttp);
 
@@ -47,7 +47,7 @@ describe('Events create/join based on distance or restaurant open time', () => {
 				"title": "first",
 				"description": "test",
 				"purpose": "test",
-				"startTime": "2018-01-15T16:56:50.036Z",  // Monday 11:56
+				"startTime": "2018-03-26T16:56:50.036Z",  // Monday 11:56
 				"minAge": 11,
 				"maxAge": 22,
 				"capacity": 22,
@@ -72,7 +72,7 @@ describe('Events create/join based on distance or restaurant open time', () => {
 				"title": "first",
 				"description": "test",
 				"purpose": "test",
-				"startTime": "2018-01-15T16:56:50.036Z",  // Monday 11:56
+				"startTime": "2018-04-15T16:56:50.036Z",  // Monday 11:56
 				"minAge": 11,
 				"maxAge": 22,
 				"capacity": 22,
@@ -97,7 +97,7 @@ describe('Events create/join based on distance or restaurant open time', () => {
 				"title": "first",
 				"description": "test",
 				"purpose": "test",
-				"startTime": "2018-01-15T17:56:50.036Z",  // Monday 11:56
+				"startTime": "2018-04-15T17:56:50.036Z",  // Monday 11:56
 				"minAge": 11,
 				"maxAge": 22,
 				"capacity": 22,

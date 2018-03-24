@@ -8,8 +8,8 @@ module.exports = {
 const facebookConsole = {
     debugURL        : "https://graph.facebook.com/debug_token",
     graphURL        : "https://graph.facebook.com/v2.8/me",
-    clientID        : "225472567917925",
-    clientToken 	: "225472567917925|61bFzVbSNMH7K9y_fzKj1_2sSQY"
+    clientID        : "135206970536825",
+    clientToken 	: "135206970536825|ed0833e33136af2b7fca0462898d2daa"
 };
 
 function verifyUser(token, cb) {
