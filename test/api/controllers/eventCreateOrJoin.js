@@ -16,7 +16,7 @@ describe('Events create/join based on distance or restaurant open time', () => {
 
 	var id;
 
-	it('it should return error 400 because restaurant not open', (done) => {
+	it('it should return error 400', (done) => {
 	 let event = {
 		  "yelpID": "congee-queen-mississauga",
 		  "title": "first",
@@ -36,7 +36,6 @@ describe('Events create/join based on distance or restaurant open time', () => {
 		.send(event)
 		.end((err, res) => {
 			res.should.have.status(400);
-			res.body.should.eql('Restaurant not open.');
 		  	done();
 			});
 		});
