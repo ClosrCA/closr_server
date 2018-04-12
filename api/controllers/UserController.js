@@ -32,6 +32,7 @@ var UserController = {
                         if (err) return res.status(400).json(err.message);
 
                         User.create({
+                            firebaseID: req.body.firebase_id,
                             facebookID: profile.id,
                             firstname: profile.first_name,
                             lastname: profile.last_name,
