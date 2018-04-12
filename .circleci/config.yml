@@ -7,7 +7,7 @@ jobs:
   build:
     docker:
       # specify the version you desire here
-      - image: circleci/node:6.11.3
+      - image: gradientco/node-elastic-beanstalk:7.10.0
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
@@ -34,3 +34,8 @@ jobs:
       # run tests!
       - run: yarn test
 
+      - run: mkdir ~/.aws && printf "[profile eb-cli]\naws_access_key_id = ${AWS_ACCESS_KEY_ID}\naws_secret_access_key = ${AWS_SECRET_ACCESS_KEY}" > ~/.aws/config
+
+      - deploy:
+          branch: develop
+          command: eb deploy yourtable_server

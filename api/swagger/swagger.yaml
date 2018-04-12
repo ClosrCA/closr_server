@@ -36,6 +36,8 @@ paths:
             properties:
               access_token:
                 type: string
+              firebase_id:
+                type: string
       responses:
         "200":
           description: Success
