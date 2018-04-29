@@ -29,10 +29,10 @@ SwaggerExpress.create(config, function(err, swaggerExpress) {
 
     mongoose.connection.on('connected', function() {
         console.log('database connected!');
-    })
+    });
     mongoose.connection.on('error', function(err) {
         console.log('db connection error: ', err);
-    })
+    });
     mongoose.connection.on('disconnected', function() {
         console.log('database disconnected');
     });

@@ -1,7 +1,7 @@
 
 
 var local = {
-    db: 'mongodb://ec2-54-211-18-210.compute-1.amazonaws.com/closr'
+    db: 'mongodb://ec2-35-182-37-165.ca-central-1.compute.amazonaws.com/closr'
 };
 
 module.exports = {
