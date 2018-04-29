@@ -1,9 +1,9 @@
 swagger: "2.0"
 info:
-  version: "0.0.1"
+  version: "0.0.2"
   title: YourTable
 # during dev, should point to your local machine
-host: localhost:10010
+host: ec2-52-60-147-109.ca-central-1.compute.amazonaws.com
 # basePath prefixes all resource paths 
 basePath: /
 # 
