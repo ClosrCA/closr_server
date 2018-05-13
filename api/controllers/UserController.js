@@ -20,13 +20,15 @@ var UserController = {
                 if (err) return res.status(500).json(err.message);
 
                 if (user) {
-                    var message = {
+                    console.log("found user: ", user);
+
+                    var body = {
                         profile: user,
                         isNewUser: false,
                         token: auth.issueToken(user.id)
                     };
 
-                    res.json({message: message})
+                    res.json(body)
                 } else {
                     fb.fetchUserProfile(fbToken, function (err, profile) {
                         if (err) return res.status(400).json(err.message);
@@ -43,6 +45,8 @@ var UserController = {
                             avatar: profile.picture.data.url
                         }, function (err, userObject) {
                             if (err) return res.status(500).json(err.message);
+
+                            console.log("created user: ", userObject);
 
                             res.json({
                                 profile: userObject,
@@ -118,10 +122,10 @@ var UserController = {
 
             fileUpload.uploadFileToAWS(file, file.originalname, function(err, data){
                 if (err) return res.status(500).json(err);
-                
+
                 User.findByIdAndUpdate(userID, {avatar : data.Location}, function (e, user) {
                     if (e) return res.status(500).json(e.message);
-    
+
                     return res.status(204).send();
                 })
             });
