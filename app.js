@@ -17,7 +17,7 @@ SwaggerExpress.create(config, function(err, swaggerExpress) {
     // install middleware
     swaggerExpress.register(app);
 
-    var port = process.env.PORT || 10010;
+    var port = env.app.port;
 
     app.get('/', function(req, res) {
         res.send('Hello World from YourTable')
@@ -25,7 +25,7 @@ SwaggerExpress.create(config, function(err, swaggerExpress) {
 
     app.listen(port);
 
-    mongoose.connect(env.local.db, {useMongoClient: true});
+    mongoose.connect(env.db.host, {useMongoClient: true});
 
     mongoose.connection.on('connected', function() {
         console.log('database connected!');
